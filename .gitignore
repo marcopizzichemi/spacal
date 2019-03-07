@@ -35,4 +35,8 @@
 *.root
 
 # All files in build folder 
+# but with a trick to keep the empty folder (you cannot commit empty folders in git)
 build/*
+!build/.gitkeep 
+
+
