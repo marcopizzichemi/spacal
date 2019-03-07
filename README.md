@@ -28,7 +28,7 @@ The installation and compilation of the package then follows similarly:
 git clone https://github.com/marcopizzichemi/spacal.git
 cd spacal/build
 cmake --verbose -DCMAKE_CXX_COMPILER=/cvmfs/sft.cern.ch/lcg/external/gcc/4.9.1/x86_64-slc6/bin/g++ -DCMAKE_C_COMPILER=/cvmfs/sft.cern.ch/lcg/external/gcc/4.9.1/x86_64-slc6/bin/gcc ../
-make -j
+make
 cd -
 ```
 N.B. The source commands reported above work, but they are not the cleanest procedure with the new EOS/Condor platform. One of the LCG environments prepared by CERN should be used. See http://lcginfo.cern.ch/ for more details. We should investigate and change the recipe accordingly.
