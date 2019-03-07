@@ -1,25 +1,29 @@
+#----------------------------------------------------------------------------
+# Setup the project
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+project(FibresCalo)
+
+# Load some basic macros which are needed later on
+include(FindROOT.cmake)
 
 
-############ Make your changes here ############ 
- 
-set(mytarget    FibresCalo      )  # equivalent to "name := myexample" in G4 GNUmakefiles
-set(useROOT     true            )  # use true or false (or comment to set to false)
-set(myROOTdict  true            )  # use true or false (or comment to set to false)
-#set(myROOTclass TMyRootEvent.hpp)  # comment if none (please see http://root.cern.ch/phpBB3//viewtopic.php?t=6172)
 
+# Create a library called "libEvent" which includes the source files given in
+# the array .
+# The extension is already found.  Any number of sources could be listed here.
 
-############ What's below should not need to be changed ############ 
+set(INCLUDE_DIRECTORIES
+${ROOT_INCLUDE_DIR}
+)
 
-# http://www.cmake.org/cmake/help/cmake_tutorial.html
-# http://www.cmake.org/cmake/help/cmake2.6docs.html
-# http://www.cmake.org/Wiki/CMake_FAQ
+include_directories( ${INCLUDE_DIRECTORIES})
 
-set(mymain ${mytarget}.cc)
-set(myexe  ${mytarget}   )
-set(myproj ${mytarget}_  )  # any name as long as it is different from myexe
+set(LINK_DIRECTORIES
+${ROOT_LIBRARY_DIR}
+)
 
-project(${myproj})
+#set (CMAKE_CXX_FLAGS "-Wshadow -Wvla -Wsign-compare")
+
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
@@ -32,51 +36,55 @@ if(WITH_GEANT4_UIVIS)
 else()
   find_package(Geant4 REQUIRED)
 endif()
- 
+
 #----------------------------------------------------------------------------
 # Setup Geant4 include directories and compile definitions
-# Setup include directory for this project
 #
 include(${Geant4_USE_FILE})
-include_directories(${PROJECT_SOURCE_DIR}/include)
-if(useROOT)
-        if(myROOTclass)
-                EXECUTE_PROCESS(COMMAND rootcint -f dict.cc -c ${PROJECT_SOURCE_DIR}/include/${myROOTclass} ${PROJECT_SOURCE_DIR}/include/LinkDef.h)
-        endif(myROOTclass)
-        if(myROOTdict)
-                EXECUTE_PROCESS(COMMAND rootcint -f dict.cc -c ${PROJECT_SOURCE_DIR}/include/STLDict.hh ${PROJECT_SOURCE_DIR}/include/LinkDef.h)
-        endif(myROOTdict)
-        EXECUTE_PROCESS(COMMAND root-config --cflags OUTPUT_VARIABLE ROOT_CXX_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ROOT_CXX_FLAGS}")
-endif(useROOT) 
- 
+
 #----------------------------------------------------------------------------
 # Locate sources and headers for this project
-# NB: headers are included so they will show up in IDEs
 #
+include_directories(${PROJECT_SOURCE_DIR}/include
+                    ${Geant4_INCLUDE_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(${myexe} ${mymain} ${sources} ${headers})
-if(useROOT)
-        EXECUTE_PROCESS(COMMAND root-config --libs OUTPUT_VARIABLE ROOT_LD_FLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-        if(myROOTclass OR myROOTdict)
-                set(CMAKE_EXE_LINKER_FLAGS "${ROOT_LD_FLAGS} dict.cc")
-        else(myROOTclass OR myROOTdict)
-                set(CMAKE_EXE_LINKER_FLAGS ${ROOT_LD_FLAGS})
-        endif(myROOTclass OR myROOTdict)
-endif(useROOT)
-target_link_libraries(${myexe} ${Geant4_LIBRARIES})
+#ROOT_LIBRARIES := $(filter-out -lNew,$(ROOT_LIBRARIES))
+
+add_executable(FibresCalo FibresCalo.cc ${sources} ${headers})
+target_link_libraries(FibresCalo ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
 #----------------------------------------------------------------------------
-# For internal Geant4 use - but has no effect if you build this example standalone
+# Copy all scripts to the build directory, i.e. the directory in which we
+# build OpNovice. This is so that we can run the executable directly because it
+# relies on these scripts being in the current working directory.
 #
-add_custom_target(${myproj} DEPENDS ${myexe})
+set(g4scanner_SCRIPTS
+    #gui.mac
+    #icons.mac
+    #run.png
+    vis.mac
+    #run.mac
+    #runSingle.mac
+    #matrix.cfg
+    #structDictionary.C
+  )
+
+foreach(_script ${g4scanner_SCRIPTS})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_script}
+    ${PROJECT_BINARY_DIR}/${_script}
+    COPYONLY
+    )
+endforeach()
 
 #----------------------------------------------------------------------------
-# Install the executable to 'bin' folder of CMAKE_INSTALL_PREFIX
+# Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
-install(TARGETS ${myexe} DESTINATION bin)
+install(TARGETS FibresCalo DESTINATION bin)
+set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_CXX_FLAGS "-W -Wall -pedantic -Wno-non-virtual-dtor -Wno-long-long -Wwrite-strings -Wpointer-arith -Woverloaded-virtual -Wno-variadic-macros -pipe -std=c++11")
