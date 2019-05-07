@@ -39,7 +39,7 @@
 // Created:     1996-04-30
 // Author:      Juliet Armstrong
 // mail:        gum@triumf.ca
-//     
+//
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include <iostream>
@@ -95,41 +95,41 @@ int main(int argc,char** argv)
 {
   //gInterpreter -> GenerateDictionary("vector<float>","vector");
   //gInterpreter -> GenerateDictionary("map<int,vector<float> >","map,vector");
-  
-  
+
+
   if (argc != 3 && argc != 2)
   {
-    cout << "Syntax for exec: crystal <configuration file> <output file>" << endl; 
-    cout << "Syntax for viz:  crystal <configuration file>" << endl; 
+    cout << "Syntax for exec: crystal <configuration file> <output file>" << endl;
+    cout << "Syntax for viz:  crystal <configuration file>" << endl;
     return 0;
   }
-  
+
   string file;
   string filename;
   TFile* outfile = NULL;
-  
-  if(argc == 3) 
+
+  if(argc == 3)
   {
-    cout << "Starting exec mode..." << endl; 
+    cout << "Starting exec mode..." << endl;
     file = argv[2];
     filename = file + ".root";
     G4cout << "Writing data to file '" << filename << "' ..." << G4endl;
-    
+
     outfile = new TFile((TString)filename,"RECREATE");
     outfile -> cd();
   }
-  
+
   if (argc == 2)
   {
-    cout<<"Starting viz mode..."<<endl; 
+    cout<<"Starting viz mode..."<<endl;
   }
-  
+
   cout<<"=====>   C O N F I G U R A T I O N   <====\n"<<endl;
-  
+
   G4cout << "Configuration file: '" << argv[1] << "'" << G4endl;
   ConfigFile config(argv[1]);
-  
-  
+
+
   // Seed the random number generator manually
   //
   G4long myseed = config.read<long int>("seed");
@@ -140,14 +140,14 @@ int main(int argc,char** argv)
   }
   G4cout << "Random seed : " << myseed << G4endl;
   CLHEP::HepRandom::setTheSeed(myseed);
-  
+
   std::vector<float> attLengths;
   config.readIntoVect(attLengths,"attLengths");
-  
+
   CreateTree* mytree = new CreateTree ("tree",attLengths) ;
   CreateTree::Instance()->attenuationLengths->Fill();
-  
-  
+
+
   // Get runtime options
   //
   G4int printModulo = config.read<int> ("printModulo");
@@ -155,142 +155,142 @@ int main(int argc,char** argv)
   G4int switchOnCerenkov     = config.read<int> ("switchOnCerenkov");
   G4int propagateScintillation = config.read<int> ("propagateScintillation");
   G4int propagateCerenkov     = config.read<int> ("propagateCerenkov");
-  
+
   // User Verbose output class
   //
   G4VSteppingVerbose* verbosity = new SteppingVerbose;
   G4VSteppingVerbose::SetInstance(verbosity);
-  
+
   // Run manager
   //
   G4RunManager* runManager = new G4RunManager;
-  
-  
+
+
   //Physics list defined using PhysListFactory
   //
   std::string physName("");
-  
+
   G4PhysListFactory factory;
   const std::vector<G4String>& names = factory.AvailablePhysLists();
   for(unsigned n = 0; n != names.size(); n++)
     G4cout << "PhysicsList: " << names[n] << G4endl;
-  
+
   if( physName == "")
   {
     char* path = getenv("PHYSLIST");
     if( path ) physName = G4String(path);
   }
-  
+
   if ( physName == "" || factory.IsReferencePhysList(physName))
   {
-    // physName = "FTFP_BERT";
-    physName = "FTFP_BERT_EMV"; // less precise, but supposed to be faster
+    physName = "FTFP_BERT";
+    // physName = "FTFP_BERT_EMV"; // less precise, but supposed to be faster
                                 // it might be the one used by CMS
   }
-  
-  std::cout << "Using physics list: " << physName << std::endl; 
-  
-  
+
+  std::cout << "Using physics list: " << physName << std::endl;
+
+
   // UserInitialization classes - mandatory
   //
-  
-  G4cout << ">>> Define physics list::begin <<<" << G4endl; 
+
+  G4cout << ">>> Define physics list::begin <<<" << G4endl;
   G4VModularPhysicsList* physics = factory.GetReferencePhysList(physName);
   physics->RegisterPhysics(new G4EmUserPhysics(switchOnScintillation,switchOnCerenkov));
   runManager-> SetUserInitialization(physics);
-  G4cout << ">>> Define physics list::end <<<" << G4endl; 
-  
-  G4cout << ">>> Define DetectorConstruction::begin <<<" << G4endl; 
+  G4cout << ">>> Define physics list::end <<<" << G4endl;
+
+  G4cout << ">>> Define DetectorConstruction::begin <<<" << G4endl;
   DetectorConstruction* detector = new DetectorConstruction(argv[1]);
   runManager-> SetUserInitialization(detector);
-  G4cout << ">>> Define DetectorConstruction::end <<<" << G4endl; 
-  
-  G4cout << ">>> Define PrimaryGeneratorAction::begin <<<" << G4endl; 
+  G4cout << ">>> Define DetectorConstruction::end <<<" << G4endl;
+
+  G4cout << ">>> Define PrimaryGeneratorAction::begin <<<" << G4endl;
 
   G4ThreeVector posCentre(
-      0. * m, 
-      0. * m, 
+      0. * m,
+      0. * m,
       -1. * (detector->GetModule_z () / m) / 2. * m
     ) ;
 
 
   G4VUserPrimaryGeneratorAction* gen_action = new PrimaryGeneratorAction(posCentre);
   runManager->SetUserAction(gen_action);
-  G4cout << ">>> Define PrimaryGeneratorAction::end <<<" << G4endl; 
-  
+  G4cout << ">>> Define PrimaryGeneratorAction::end <<<" << G4endl;
+
   // UserAction classes
   //
-  
-  G4cout << ">>> Define RunAction::begin <<<" << G4endl; 
+
+  G4cout << ">>> Define RunAction::begin <<<" << G4endl;
   G4UserRunAction* run_action = new RunAction;
-  runManager->SetUserAction(run_action);  
-  G4cout << ">>> Define RunAction::end <<<" << G4endl; 
-  
-  G4cout << ">>> Define EventAction::begin <<<" << G4endl; 
+  runManager->SetUserAction(run_action);
+  G4cout << ">>> Define RunAction::end <<<" << G4endl;
+
+  G4cout << ">>> Define EventAction::begin <<<" << G4endl;
   G4UserEventAction* event_action = new EventAction(printModulo);
   runManager->SetUserAction(event_action);
-  G4cout << ">>> Define EventAction::end <<<" << G4endl; 
-  
-  G4cout << ">>> Define TrackingAction::begin <<<" << G4endl; 
+  G4cout << ">>> Define EventAction::end <<<" << G4endl;
+
+  G4cout << ">>> Define TrackingAction::begin <<<" << G4endl;
   TrackingAction* tracking_action = new TrackingAction;
-  runManager->SetUserAction(tracking_action); 
+  runManager->SetUserAction(tracking_action);
   G4cout << ">>> Define TrackingAction::end <<<" << G4endl;
-  
-  G4cout << ">>> Define SteppingAction::begin <<<" << G4endl; 
+
+  G4cout << ">>> Define SteppingAction::begin <<<" << G4endl;
   SteppingAction* stepping_action = new SteppingAction(detector,propagateScintillation,propagateCerenkov);
-  runManager->SetUserAction(stepping_action); 
+  runManager->SetUserAction(stepping_action);
   G4cout << ">>> Define SteppingAction::end <<<" << G4endl;
-  
+
   string gps_instructions_file = "" ;
-    
+
   if (argc == 2)   // Define UI session for interactive mode
-  {   
+  {
     // Initialize G4 kernel
     //
     runManager -> Initialize();
-    
+
     #ifdef G4VIS_USE
     G4VisManager* visManager = new G4VisExecutive;
     visManager -> Initialize();
     #endif
-    
-    G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
+
+    G4UImanager* UImanager = G4UImanager::GetUIpointer();
     #ifdef G4UI_USE
     G4UIExecutive * ui = new G4UIExecutive(argc,argv);
     #ifdef G4VIS_USE
-    UImanager -> ApplyCommand("/control/execute vis.mac");     
+    UImanager -> ApplyCommand("/control/execute vis.mac");
     #endif
     ui -> SessionStart();
     delete ui;
-    #endif 
-   
+    #endif
+
     #ifdef G4VIS_USE
     delete visManager;
-    #endif  
+    #endif
   }
   else
   {
     runManager -> Initialize();
-    G4UImanager* UImanager = G4UImanager::GetUIpointer(); 
+    G4UImanager* UImanager = G4UImanager::GetUIpointer();
     config.readInto (gps_instructions_file, "gps_instructions_file") ;
     UImanager -> ApplyCommand("/control/execute " + gps_instructions_file);
-  } 
-  
+  }
+
   // Job termination
   // Free the store: user actions, physics_list and detector_description are
   // owned and deleted by the run manager, so they should not
   // be deleted in the main() program !
-  
+
   delete runManager;
   delete verbosity;
-  
-  if(argc == 3) 
+
+  if(argc == 3)
   {
     G4cout << "Writing tree to file " << filename << " ..." << G4endl;
     mytree->Write (outfile) ;
     outfile->Close () ;
   }
-  
+
   return 0;
 }
 
@@ -299,13 +299,13 @@ int main(int argc,char** argv)
 long int CreateSeed()
 {
   TRandom3 rangen;
-  
+
   long int sec = time(0);
   G4cout << "Time : " << sec << G4endl;
-  
+
   sec += getpid();
   G4cout << "PID  : " << getpid() << G4endl;
-  
+
   FILE* fp = fopen ("/proc/uptime", "r");
   int upsecs = 0;
   if( fp != NULL )
@@ -322,7 +322,7 @@ long int CreateSeed()
   }
   G4cout << "Upsecs: " << upsecs << G4endl;
   sec += upsecs;
-  
+
   G4cout << "Seed for srand: " << sec << G4endl;
   srand(sec);
   rangen.SetSeed(rand());

@@ -12,11 +12,11 @@
 class MyMaterials
 {
 private:
-  
+
 public:
   MyMaterials();
   ~MyMaterials();
-  
+
   static G4Material* Vacuum();
   static G4Material* Air();
   static G4Material* Water();
@@ -43,7 +43,9 @@ public:
   static G4Material* PVC();
   static G4Material* CuAir(); //PMT tube
   static G4Material* Cu(); // Wires
-  
+
+  static G4MaterialPropertiesTable* ESR(); // ESR surface
+
   static G4double fromNmToEv(G4double wavelength);
   static G4double fromEvToNm(G4double energy);
   static G4double CalculateSellmeier(int size, G4double indexZero, G4double *nVec, G4double *lVec, G4double wavelength);

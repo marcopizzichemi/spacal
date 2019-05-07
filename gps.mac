@@ -1,8 +1,8 @@
 # Macro file for the
 # initialization of G4GeneralParticleSource
 
-/gps/energy 1 GeV
-/gps/particle e-
+/gps/energy 1 MeV
+/gps/particle mu-
 /gps/pos/type Plane
 /gps/pos/shape Square
 /gps/pos/centre -10.5 0 -10  mm
@@ -13,4 +13,4 @@
 /gps/direction 0.05235 0 0.9986
 
 #/tracking/verbose 1
-/run/beamOn 1000
+/run/beamOn 1
