@@ -16,6 +16,7 @@ private:
 public:
   MyMaterials();
   ~MyMaterials();
+  // ConfigFile config ;
 
   static G4Material* Vacuum();
   static G4Material* Air();
@@ -39,12 +40,14 @@ public:
   static G4Material* SiO2_Ce();
   static G4Material* YAG_Ce();
   static G4Material* GAGG_Ce();
+  static G4Material* GAGG_Ce_Mg();
   static G4Material* PLEX();
   static G4Material* PVC();
   static G4Material* CuAir(); //PMT tube
   static G4Material* Cu(); // Wires
 
   static G4MaterialPropertiesTable* ESR(); // ESR surface
+  static G4MaterialPropertiesTable* ABS_SURF();
 
   static G4double fromNmToEv(G4double wavelength);
   static G4double fromEvToNm(G4double energy);

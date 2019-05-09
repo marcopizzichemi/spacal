@@ -6,7 +6,8 @@ using namespace CLHEP;
 
 
 MyMaterials::MyMaterials()
-{}
+{
+}
 
 
 
@@ -310,15 +311,15 @@ G4Material* MyMaterials::YAG_Ce()
   G4double a, z, density;
 
   G4Element* Y  = new G4Element("Silicon",   "Y",  z = 39., a = 88.01* g/mole);
-  G4Element* Al = new G4Element("Aluminium", "Al", z = 27., a = 28.09* g/mole);
+  G4Element* Al = new G4Element("Aluminium", "Al", z = 13., a = 28.09* g/mole);
   G4Element* O  = new G4Element("Oxygen",    "O",  z =  8., a = 16.00* g/mole);
 
-  G4Material* mat = new G4Material ("YAGCe", density = 4.6*g/cm3,3);
+  G4Material* mat = new G4Material ("YAG_Ce", density = 4.6*g/cm3,3);
   mat->AddElement(Y,3);
   mat->AddElement(Al,5);
   mat->AddElement(O,12);
-
-  const G4int nEntries_RI = 42;
+  /*
+  const G4int nEntries_RI = 40;
   G4double PhotonEnergy_RI[nEntries_RI] =
     { 0.1000*eV, 1.0000*eV, 1.0121*eV, 1.0332*eV,
       1.0552*eV, 1.0781*eV, 1.1021*eV, 1.1271*eV,
@@ -329,11 +330,10 @@ G4Material* MyMaterials::YAG_Ce()
       1.8368*eV, 1.9074*eV, 1.9837*eV, 2.0664*eV,
       2.1562*eV, 2.2543*eV, 2.3616*eV, 2.4797*eV,
       2.6102*eV, 2.7552*eV, 2.9173*eV, 3.0996*eV,
-      3.3062*eV, 3.5424*eV, 3.8149*eV, 4.1328*eV,
-      4.5085*eV, 4.9594*eV };
+      3.3062*eV, 3.5424*eV, 3.8149*eV, 4.1328*eV}; //{,      4.5085*eV, 4.9594*eV, 6.5000*eV };
 
   G4double RefractiveIndex[nEntries_RI] =
-    { 1.8116, 1.8116, 1.8118, 1.8122,
+    { 1.8115, 1.8116, 1.8118, 1.8122,
       1.8126, 1.8131, 1.8135, 1.8140,
       1.8144, 1.8149, 1.8154, 1.8160,
       1.8165, 1.8171, 1.8177, 1.8184,
@@ -342,35 +342,121 @@ G4Material* MyMaterials::YAG_Ce()
       1.8269, 1.8284, 1.8300, 1.8318,
       1.8338, 1.8362, 1.8388, 1.8419,
       1.8455, 1.8497, 1.8548, 1.8608,
-      1.8683, 1.8775, 1.8892, 1.9045,
-      1.9249, 1.9532 };
+      1.8683, 1.8775, 1.8892, 1.9045}; //, 1.9249, 1.9532, 1.9600 };
+*/
+  //fixed index of refraction
+  const G4int nEntries_RI = 8;
+  G4double PhotonEnergy_RI[nEntries_RI] =  { 0.1*eV, 1.0*eV, 2.26*eV, 2.55*eV, 2.84*eV, 3.06*eV,
+3.4*eV, 4.1*eV};
+  G4double RefractiveIndex[nEntries_RI] =  { 1.84,   1.84,   1.84,    1.84,    1.84,    1.84,    1.84,
+1.84};
+
   //G4double Rayleigh[nEntries_RI] =
   //  { 138.*mm, 138.*mm, 138.*mm };
 
-  const G4int nEntries_ABS = 4;
+   //intrinsic absorption spectrum
+  const G4int nEntries_ABS = 84;
   G4double PhotonEnergy_ABS[nEntries_ABS] =
-    { 1.0 * eV, 1.84 * eV, 4.08 * eV, 6.26 * eV };
-  G4double Absorption[nEntries_ABS] =
-    { 138.*mm, 138.*mm, 138.*mm, 138. *mm };
+    {4.42857*eV, 4.35088*eV, 4.27586*eV, 4.20339*eV, 4.13333*eV, 4.06557*eV, 4*eV, 3.93651*eV,
+3.875*eV,
+    3.81538*eV, 3.75758*eV, 3.70149*eV, 3.64706*eV, 3.5942*eV, 3.54286*eV, 3.49296*eV, 3.44444*eV,
+    3.39726*eV, 3.35135*eV, 3.30667*eV, 3.26316*eV, 3.22078*eV, 3.17949*eV, 3.13924*eV, 3.1*eV,
+3.06173*eV,
+    3.02439*eV, 2.98795*eV, 2.95238*eV, 2.91765*eV, 2.88372*eV, 2.85057*eV, 2.81818*eV, 2.78652*eV,
+    2.75556*eV, 2.72527*eV, 2.69565*eV, 2.66667*eV, 2.6383*eV, 2.61053*eV, 2.58333*eV, 2.5567*eV,
+    2.53061*eV, 2.50505*eV, 2.48*eV, 2.45545*eV, 2.43137*eV, 2.40777*eV, 2.38462*eV, 2.3619*eV,
+    2.33962*eV, 2.31776*eV, 2.2963*eV, 2.27523*eV, 2.25455*eV, 2.23423*eV, 2.21429*eV, 2.19469*eV,
+    2.17544*eV, 2.15652*eV, 2.13793*eV, 2.11966*eV, 2.10169*eV, 2.08403*eV, 2.06667*eV, 2.04959*eV,
+    2.03279*eV, 2.01626*eV, 2*eV, 1.984*eV, 1.96825*eV, 1.95276*eV, 1.9375*eV, 1.92248*eV, 1.90769*eV,
+    1.89313*eV, 1.87879*eV, 1.86466*eV, 1.85075*eV, 1.83704*eV, 1.82353*eV, 1.81022*eV, 1.7971*eV,
+1.78417*eV};
 
-  const G4int NUMENTRIES_1 = 5;
-  G4double FAST_Energy[NUMENTRIES_1]    = {1.8*eV,1.90*eV,2.7*eV,2.88*eV,4.08*eV};
-  G4double FAST_COMPONENT[NUMENTRIES_1] = {0.00,1.00,2.0,1.0,0.00};
+  G4double Absorption[nEntries_ABS] =
+    {12.7389*mm, 7.96854*mm, 9.79472*mm, 11.3642*mm, 13.9544*mm, 14.078*mm, 9.48293*mm, 4.60862*mm,
+    0.45205*mm, 0.14906*mm, 0.09215*mm, 0.05898*mm, 0.09349*mm, 0.09448*mm, 4.00614*mm, 14.055*mm,
+    59.4712*mm, 177.765*mm, 322.779*mm, 407.883*mm, 423.384*mm, 250.626*mm, 107.986*mm, 40.2593*mm,
+    16.1867*mm, 7.08721*mm, 3.3827*mm, 1.85802*mm, 0.42111*mm, 0.348*mm, 0.36044*mm, 0.37582*mm,
+    0.39199*mm, 0.33268*mm, 0.27998*mm, 0.33348*mm, 0.21815*mm, 0.28273*mm, 0.37124*mm, 0.4064*mm,
+    1.09597*mm, 1.45447*mm, 2.03141*mm, 3.62354*mm, 6.92578*mm, 13.9067*mm, 29.0131*mm, 60.2374*mm,
+    129.476*mm, 226.564*mm, 553.51*mm, 516.632*mm, 600.*mm, 700.*mm, 800.*mm, 900.*mm,
+    1000.*mm, 1000.*mm, 1000.*mm, 1000.2*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm,
+    1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm,
+    1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm,
+    1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm};
+
+  //emission spectrum
+  const G4int NUMENTRIES_1 = 137;
+  G4double FAST_Energy[NUMENTRIES_1]    =
+  {2.72827*eV, 2.71335*eV, 2.69859*eV, 2.68398*eV, 2.66954*eV, 2.65525*eV, 2.64111*eV, 2.62712*eV,
+2.61328*eV, 2.59958*eV,
+    2.58603*eV, 2.57261*eV, 2.55934*eV, 2.5462*eV, 2.5332*eV, 2.52033*eV, 2.50758*eV, 2.49497*eV,
+2.48248*eV, 2.47012*eV,
+    2.45788*eV, 2.44576*eV, 2.43376*eV, 2.42188*eV, 2.41011*eV, 2.39845*eV, 2.38691*eV, 2.37548*eV,
+2.36416*eV, 2.35294*eV,
+    2.34183*eV, 2.33083*eV, 2.31993*eV, 2.30912*eV, 2.29842*eV, 2.28782*eV, 2.27732*eV, 2.26691*eV,
+2.2566*eV, 2.24638*eV,
+    2.23625*eV, 2.22621*eV, 2.21626*eV, 2.20641*eV, 2.19663*eV, 2.18695*eV, 2.17735*eV, 2.16783*eV,
+2.1584*eV, 2.14905*eV,
+    2.13978*eV, 2.13058*eV, 2.12147*eV, 2.11244*eV, 2.10348*eV, 2.09459*eV, 2.08579*eV, 2.07705*eV,
+2.06839*eV, 2.0598*eV,
+    2.05128*eV, 2.04283*eV, 2.03445*eV, 2.02614*eV, 2.0179*eV, 2.00972*eV, 2.00161*eV, 1.99357*eV,
+1.98559*eV, 1.97767*eV,
+    1.96982*eV, 1.96203*eV, 1.95429*eV, 1.94662*eV, 1.93901*eV, 1.93146*eV, 1.92397*eV, 1.91654*eV,
+1.90916*eV, 1.90184*eV,
+    1.89458*eV, 1.88737*eV, 1.88021*eV, 1.87311*eV, 1.86606*eV, 1.85907*eV, 1.85213*eV, 1.84524*eV,
+1.8384*eV, 1.83161*eV,
+    1.82487*eV, 1.81818*eV, 1.81154*eV, 1.80495*eV, 1.7984*eV, 1.79191*eV, 1.78546*eV, 1.77905*eV,
+1.77269*eV, 1.76638*eV,
+    1.76011*eV, 1.75389*eV, 1.74771*eV, 1.74157*eV, 1.73548*eV, 1.72943*eV, 1.72342*eV, 1.71745*eV,
+1.71153*eV, 1.70564*eV,
+    1.69979*eV, 1.69399*eV, 1.68822*eV, 1.6825*eV, 1.67681*eV, 1.67116*eV, 1.66555*eV, 1.65997*eV,
+1.65444*eV, 1.64894*eV,
+    1.64347*eV, 1.63804*eV, 1.63265*eV, 1.6273*eV, 1.62198*eV, 1.61669*eV, 1.61144*eV, 1.60622*eV,
+1.60103*eV, 1.59588*eV,
+    1.59076*eV, 1.58568*eV, 1.58062*eV, 1.5756*eV, 1.57061*eV, 1.56566*eV, 1.56073*eV};
+
+  G4double FAST_COMPONENT[NUMENTRIES_1] =
+  {0.017312, 0.0096453, 0.00790803, 0.00810917, 0.0088267, 0.0100443, 0.0119759, 0.013618, 0.0158952,
+0.0205216, 0.0276587,
+    0.0355978, 0.047533, 0.063484, 0.0846373, 0.110553, 0.142739, 0.179262, 0.220629, 0.265465,
+0.316428, 0.373613, 0.435236,
+    0.503049, 0.573143, 0.645777, 0.716553, 0.781489, 0.830571, 0.868259, 0.892522, 0.905547, 0.90921,
+0.904013, 0.894359,
+    0.879165, 0.863961, 0.848755, 0.832279, 0.814811, 0.796789, 0.781315, 0.763563, 0.741355,
+0.724224, 0.705468, 0.687985,
+    0.668306, 0.65034, 0.62812, 0.608418, 0.588743, 0.569351, 0.545681, 0.521421, 0.500633, 0.47682,
+0.455015, 0.432658,
+    0.408202, 0.385464, 0.363256, 0.341688, 0.321938, 0.302229, 0.283179, 0.264294, 0.244777,
+0.227309, 0.208308, 0.193561,
+    0.178659, 0.163398, 0.14938, 0.137934, 0.126634, 0.116962, 0.106936, 0.0974455, 0.0876783,
+0.0803322, 0.073087, 0.0664133,
+    0.0601629, 0.0542353, 0.0497304, 0.0440716, 0.0397871, 0.035986, 0.0335943, 0.0305447, 0.027748,
+0.0251957, 0.0232941,
+    0.0210163, 0.0181465, 0.0167443, 0.014946, 0.0138611, 0.0129008, 0.0123556, 0.0118624, 0.011176,
+0.0102985, 0.00944158,
+    0.00946978, 0.00862405, 0.00771896, 0.00694318, 0.00643815, 0.00590943, 0.00537023, 0.00446022,
+0.00436113, 0.0043437,
+    0.00408437, 0.00385623, 0.0032281, 0.00318978, 0.00319752, 0.00311753, 0.00256044, 0.00262745,
+0.00253195, 0.00259158,
+    0.00233708, 0.00213198, 0.00234155, 0.0024483, 0.00209324, 0.0018311, 0.00175891, 0.00183815,
+0.00192849, 0.00163606,
+    0.00136759, 0.00170809};
 
   G4MaterialPropertiesTable* mt = new G4MaterialPropertiesTable();
   mt->AddProperty ("RINDEX",    PhotonEnergy_RI,  RefractiveIndex, nEntries_RI);
   mt->AddProperty ("ABSLENGTH", PhotonEnergy_ABS, Absorption,      nEntries_ABS);
   mt->AddProperty("FASTCOMPONENT", FAST_Energy, FAST_COMPONENT, NUMENTRIES_1);
 
-  mt->AddConstProperty("SCINTILLATIONYIELD",1800/MeV);
-  mt->AddConstProperty("RESOLUTIONSCALE",8.5);
-  mt->AddConstProperty("FASTTIMECONSTANT",55.*ns);
+  mt->AddConstProperty("SCINTILLATIONYIELD", 33200/MeV);
+  mt->AddConstProperty("RESOLUTIONSCALE",1);
+  mt->AddConstProperty("FASTTIMECONSTANT", 90.*ns);
   mt->AddConstProperty("YIELDRATIO",1.0);
   mt->AddConstProperty("FASTSCINTILLATIONRISETIME",0.5*ns);
 
   mat->SetMaterialPropertiesTable(mt);
   return mat;
 }
+
 
 
 
@@ -564,6 +650,11 @@ G4Material* MyMaterials::OpticalGrease()
 
   return mat;
 }
+
+
+
+
+
 
 G4Material* MyMaterials::DSB_Ce()  // Nanostructured glass ceramics scintillator DSB:Ce
 {
@@ -1379,6 +1470,128 @@ G4Material* MyMaterials::PWO()
 }
 
 
+
+G4Material* MyMaterials::GAGG_Ce_Mg() // Gadolinium Gallium Aluminum Garnet - undoped
+{
+  G4double a, z, density;
+  G4Element*  O = new G4Element("Oxygen",   "O",  z = 8.,  a = 16.00  *g/mole);
+  G4Element* Ga = new G4Element("Gallium",  "Ga", z = 31., a = 69.723 *g/mole);
+  G4Element* Gd = new G4Element("Gadolinio","Gd", z = 64., a = 157.25 *g/mole);
+  G4Element* Al = new G4Element("Aluminum", "Al", z = 13., a = 28.09  *g/mole);
+
+  G4Material* mat = new G4Material("GAGG_Ce_Mg", density = 6.63 *g/cm3, 4);
+  mat->AddElement(Ga,3);
+  mat->AddElement(Gd,3);
+  mat->AddElement(Al,2);
+  mat->AddElement(O,12);
+/*
+  const G4int nEntries_RI = 9;
+  G4double PhotonEnergy_RI[nEntries_RI] =
+    {0.1*eV, 1.0*eV, 1.550*eV, 1.771*eV, 1.907*eV, 2.105*eV, 2.917*eV, 3.1*eV, 4.1*eV}; //6.5*eV };
+
+  G4double RefractiveIndex[nEntries_RI] =
+    {1.890, 1.892, 1.897, 1.898, 1.899, 1.903, 1.937, 1.950, 1.983}; //2.400};
+*/
+  //fixed index of refraction
+  const G4int nEntries_RI = 8;
+  G4double PhotonEnergy_RI[nEntries_RI] =  { 0.1*eV, 1.0*eV, 2.26*eV, 2.55*eV, 2.84*eV, 3.06*eV,
+3.4*eV, 4.1*eV};
+  G4double RefractiveIndex[nEntries_RI] =  { 1.92,   1.92,   1.92,    1.92,    1.92,    1.92,    1.92,
+1.92};
+
+ //intrinsic absorption spectrum
+  const G4int nEntries_ABS = 122;
+  G4double PhotonEnergy_ABS[nEntries_ABS] =
+    {1.55*eV, 1.55975*eV, 1.56962*eV, 1.57962*eV, 1.58974*eV, 1.6*eV, 1.61039*eV, 1.62092*eV,
+1.63158*eV, 1.64238*eV, 1.65333*eV, 1.66443*eV, 1.67568*eV, 1.68707*eV, 1.69863*eV, 1.71034*eV,
+1.72222*eV, 1.73427*eV, 1.74648*eV, 1.75887*eV, 1.77143*eV, 1.78417*eV, 1.7971*eV, 1.81022*eV,
+1.82353*eV, 1.83704*eV, 1.85075*eV, 1.86466*eV, 1.87879*eV, 1.89313*eV, 1.90769*eV, 1.92248*eV,
+1.9375*eV, 1.95276*eV, 1.96825*eV, 1.984*eV, 2*eV, 2.01626*eV, 2.03279*eV, 2.04959*eV, 2.06667*eV,
+2.08403*eV, 2.10169*eV, 2.11966*eV, 2.13793*eV, 2.15652*eV, 2.17544*eV, 2.19469*eV, 2.21429*eV,
+2.23423*eV, 2.25455*eV, 2.27523*eV, 2.2963*eV, 2.31776*eV, 2.33962*eV, 2.3619*eV, 2.38462*eV,
+2.40777*eV, 2.43137*eV, 2.45545*eV, 2.48*eV, 2.50505*eV, 2.53061*eV, 2.5567*eV, 2.58333*eV,
+2.61053*eV, 2.6383*eV, 2.66667*eV, 2.69565*eV, 2.72527*eV, 2.75556*eV, 2.78652*eV, 2.81818*eV,
+2.85057*eV, 2.88372*eV, 2.91765*eV, 2.95238*eV, 2.98795*eV, 3.02439*eV, 3.06173*eV, 3.1*eV,
+3.13924*eV, 3.17949*eV, 3.22078*eV, 3.26316*eV, 3.30667*eV, 3.35135*eV, 3.39726*eV, 3.44444*eV,
+3.49296*eV, 3.54286*eV, 3.60465*eV, 3.65782*eV, 3.72372*eV, 3.78049*eV, 3.83901*eV, 3.89937*eV,
+3.96166*eV, 4.02597*eV, 4.09241*eV, 4.16107*eV, 4.23208*eV, 4.30556*eV, 4.38163*eV, 4.46043*eV,
+4.55882*eV, 4.64419*eV, 4.75096*eV, 4.84375*eV, 4.94024*eV, 5.04065*eV, 5.14523*eV, 5.25424*eV,
+5.36797*eV, 5.48673*eV, 5.61086*eV, 5.74074*eV, 5.87678*eV, 6.01942*eV, 6.16915*eV, 6.32653*eV,
+6.49215*eV};
+
+  G4double Absorption[nEntries_ABS] =
+    {1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm,
+1000.*mm, 950.*mm, 900.*mm, 850.*mm, 800.*mm, 750.*mm, 700.*mm, 650.*mm, 600.*mm, 600.*mm, 550.*mm,
+525.*mm, 500.*mm, 495.113*mm, 493.925*mm, 490.185*mm, 485.183*mm, 480.656*mm, 475.745*mm, 474.191*mm,
+470.37*mm, 465.699*mm, 460.696*mm, 455.925*mm, 450.141*mm, 445.712*mm, 440.798*mm, 435.2*mm,
+430.659*mm, 425.727*mm, 420.328*mm, 415.261*mm, 410.212*mm, 405.257*mm, 402.131*mm, 401.244*mm,
+400.65*mm, 395.193*mm, 390.745*mm, 385.259*mm, 379.265*mm, 373.136*mm, 374.806*mm, 326.031*mm,
+311.609*mm, 281.734*mm, 217.074*mm, 156.221*mm, 101.25*mm, 59.9635*mm, 32.9009*mm, 17.6943*mm,
+9.62468*mm, 5.33133*mm, 3.06042*mm, 1.86737*mm, 0.931539*mm, 1.17313*mm, 1.33421*mm, 0.5*mm, 0.5*mm,
+1.0692*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.994237*mm, 1.11628*mm, 0.5*mm, 1.38984*mm, 2.55123*mm,
+5.06262*mm, 10.5534*mm, 20.0187*mm, 24.5102*mm, 17.6148*mm, 10.163*mm, 5.66707*mm, 3.08815*mm,
+1.63268*mm, 0.5*mm, 1.0365*mm, 0.5*mm, 0.5*mm, 1.06797*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.926825*mm,
+0.5*mm, 0.5*mm, 0.926322*mm, 0.925969*mm, 0.5*mm, 0.5*mm, 1.19071*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm,
+0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 1.25215*mm, 1.07403*mm,
+1.16123*mm, 1.22498*mm};
+
+  //emission spectrum
+  const G4int NUMENTRIES_1 = 132;
+  G4double FAST_Energy[NUMENTRIES_1]    =
+  {2.6327*eV, 2.6188*eV, 2.60504*eV, 2.59143*eV, 2.57796*eV, 2.56463*eV, 2.55144*eV, 2.53838*eV,
+2.52546*eV, 2.51266*eV, 2.5*eV, 2.48746*eV, 2.47505*eV, 2.46276*eV, 2.45059*eV, 2.43854*eV,
+2.42661*eV, 2.4148*eV, 2.4031*eV, 2.39151*eV, 2.38004*eV, 2.36867*eV, 2.35741*eV, 2.34626*eV,
+2.33522*eV, 2.32427*eV, 2.31343*eV, 2.30269*eV, 2.29205*eV, 2.28151*eV, 2.27106*eV, 2.26071*eV,
+2.25045*eV, 2.24029*eV, 2.23022*eV, 2.22023*eV, 2.21034*eV, 2.20053*eV, 2.19081*eV, 2.18118*eV,
+2.17163*eV, 2.16216*eV, 2.15278*eV, 2.14347*eV, 2.13425*eV, 2.12511*eV, 2.11604*eV, 2.10705*eV,
+2.09814*eV, 2.0893*eV, 2.08054*eV, 2.07185*eV, 2.06323*eV, 2.05468*eV, 2.0462*eV, 2.0378*eV,
+2.02946*eV, 2.02119*eV, 2.01299*eV, 2.00485*eV, 1.99678*eV, 1.98877*eV, 1.98083*eV, 1.97295*eV,
+1.96513*eV, 1.95738*eV, 1.94969*eV, 1.94205*eV, 1.93448*eV, 1.92696*eV, 1.9195*eV, 1.9121*eV,
+1.90476*eV, 1.89748*eV, 1.89024*eV, 1.88307*eV, 1.87595*eV, 1.86888*eV, 1.86186*eV, 1.8549*eV,
+1.84799*eV, 1.84113*eV, 1.83432*eV, 1.82756*eV, 1.82085*eV, 1.81419*eV, 1.80758*eV, 1.80102*eV,
+1.7945*eV, 1.78803*eV, 1.78161*eV, 1.77523*eV, 1.7689*eV, 1.76262*eV, 1.75637*eV, 1.75018*eV,
+1.74402*eV, 1.73791*eV, 1.73184*eV, 1.72582*eV, 1.71983*eV, 1.71389*eV, 1.70799*eV, 1.70213*eV,
+1.69631*eV, 1.69052*eV, 1.68478*eV, 1.67908*eV, 1.67341*eV, 1.66779*eV, 1.6622*eV, 1.65665*eV,
+1.65113*eV, 1.64565*eV, 1.64021*eV, 1.63481*eV, 1.62943*eV, 1.6241*eV, 1.6188*eV, 1.61353*eV,
+1.6083*eV, 1.6031*eV, 1.59794*eV, 1.59281*eV, 1.58771*eV, 1.58264*eV, 1.57761*eV, 1.57261*eV,
+1.56764*eV, 1.5627*eV, 1.55779*eV, 1.55291*eV};
+
+
+  G4double FAST_COMPONENT[NUMENTRIES_1] =
+  {0.0348132, 0.041346, 0.0462213, 0.055994, 0.0670797, 0.0809222, 0.0962054, 0.119476, 0.147153,
+0.182414, 0.217745, 0.256009, 0.299913, 0.34846, 0.391284, 0.436086, 0.487627, 0.538087, 0.591007,
+0.64409, 0.68982, 0.740803, 0.785007, 0.825553, 0.855418, 0.87689, 0.893165, 0.909735, 0.904133,
+0.904835, 0.904515, 0.896044, 0.885449, 0.872733, 0.857353, 0.837832, 0.829267, 0.810443, 0.78659,
+0.767397, 0.745877, 0.730203, 0.705547, 0.682982, 0.665159, 0.645723, 0.621589, 0.595471, 0.576994,
+0.556964, 0.533997, 0.507302, 0.484761, 0.463904, 0.439846, 0.418253, 0.404643, 0.384661, 0.360237,
+0.339777, 0.324817, 0.304963, 0.287939, 0.271009, 0.252333, 0.235159, 0.226375, 0.212185, 0.196952,
+0.184789, 0.1707, 0.159992, 0.147724, 0.140217, 0.130929, 0.121987, 0.113251, 0.102937, 0.0964418,
+0.0913118, 0.0863073, 0.0811948, 0.0732201, 0.0693917, 0.0642312, 0.0575242, 0.0533638, 0.0488039,
+0.0474854, 0.0466519, 0.0428456, 0.0431906, 0.0402339, 0.0363488, 0.0340234, 0.0328062, 0.0313949,
+0.0292326, 0.0259991, 0.0247748, 0.0240735, 0.0210389, 0.021114, 0.0211829, 0.0192813, 0.0187306,
+0.0185142, 0.0171277, 0.0167855, 0.0169199, 0.016618, 0.0150835, 0.0137522, 0.0137759, 0.0131568,
+0.0134337, 0.0135361, 0.0132448, 0.0122409, 0.0119099, 0.011421, 0.0115286, 0.0103885, 0.0105544,
+0.0118189, 0.0109937, 0.0102842, 0.0103254, 0.0101991, 0.00931661, 0.00833321, 0.00805133};
+
+  //** scintillation and optical properties **//
+  G4MaterialPropertiesTable* mt = new G4MaterialPropertiesTable();
+  mt->AddProperty ("RINDEX",    PhotonEnergy_RI,  RefractiveIndex, nEntries_RI);
+  mt->AddProperty ("ABSLENGTH", PhotonEnergy_ABS, Absorption,      nEntries_ABS);
+  mt->AddProperty("FASTCOMPONENT", FAST_Energy, FAST_COMPONENT, NUMENTRIES_1);
+
+  mt->AddConstProperty("SCINTILLATIONYIELD", 42000/MeV);
+  mt->AddConstProperty("RESOLUTIONSCALE", 1);
+  mt->AddConstProperty("FASTTIMECONSTANT", 50.*ns);
+  mt->AddConstProperty("SLOWTIMECONSTANT", 200.*ns);
+  mt->AddConstProperty("YIELDRATIO",0.6);
+  mt->AddConstProperty("FASTSCINTILLATIONRISETIME", 0.04*ns);
+
+  mat->SetMaterialPropertiesTable(mt);
+
+  return mat;
+}
+
+
 G4Material* MyMaterials::GAGG_Ce() // Gadolinium Aluminium Gallium Garnet- Ce-doped
 {
   G4double a, z, density;
@@ -1522,13 +1735,6 @@ G4MaterialPropertiesTable* MyMaterials::ESR()
   const G4int numEsrTrans = sizeof(esrTransmittance_energy)/sizeof(G4double);
   assert(sizeof(esrTransmittance_energy) == sizeof(esrTransmittance_values));
 
-  //modfication for double surface. since the Transmittance measured is for a real material, with 2 surfaces, we need to scale the measurement to have a correct result when we use the two of them
-  //this is anyway a big question mark..
-  // for(int esr_n = 0; esr_n < numEsrTrans ; esr_n++)
-  // {
-  //   esrTransmittance_values[esr_n] = pow(esrTransmittance_values[esr_n],0.6666666666666666666);
-  // }
-
   ESR_surf->AddProperty ("REALRINDEX",        vikuiti_energy_re,  vikuiti_RIndex_re,  NUMvikuiti);
   ESR_surf->AddProperty ("IMAGINARYRINDEX",   vikuiti_energy_im,  vikuiti_RIndex_im,  NUMvikuiti);
   if(esrTransmittance == -1)
@@ -1541,6 +1747,26 @@ G4MaterialPropertiesTable* MyMaterials::ESR()
   }
 
   return ESR_surf;
+}
+
+
+
+G4MaterialPropertiesTable* MyMaterials::ABS_SURF()
+{
+  G4MaterialPropertiesTable *surfPT = new G4MaterialPropertiesTable();
+  const G4int Np = 2;
+  G4double Reflectivity = 0.9;
+  G4double Energy[Np] = {1.*eV, 6.*eV};
+  G4double lobeVector[Np] = {0., 0.};
+  G4double SpecularspikeVector[Np] = {0., 0.};
+  G4double BackscatterVector[Np] = {0.,0.};
+  G4double ReflectivityVector[Np] = {Reflectivity,Reflectivity};
+  surfPT->AddProperty("SPECULARLOBECONSTANT",Energy,lobeVector,Np);
+  surfPT->AddProperty("SPECULARSPIKECONSTANT",Energy,SpecularspikeVector,Np);
+  surfPT->AddProperty("BACKSCATTERCONSTANT",Energy,BackscatterVector,Np);
+  surfPT->AddProperty("REFLECTIVITY", Energy,ReflectivityVector, Np);
+
+  return surfPT;
 }
 
 G4double MyMaterials::CalculateSellmeier (int size, G4double indexZero, G4double *nVec, G4double *lVec, G4double wavelength)

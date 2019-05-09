@@ -183,10 +183,13 @@ int main(int argc,char** argv)
 
   if ( physName == "" || factory.IsReferencePhysList(physName))
   {
-    physName = "FTFP_BERT";
+    // physName = "FTFP_BERT";
+    physName = "FTFP_BERT_EMZ";
     // physName = "FTFP_BERT_EMV"; // less precise, but supposed to be faster
                                 // it might be the one used by CMS
   }
+
+
 
   std::cout << "Using physics list: " << physName << std::endl;
 
@@ -214,7 +217,7 @@ int main(int argc,char** argv)
     ) ;
 
 
-  G4VUserPrimaryGeneratorAction* gen_action = new PrimaryGeneratorAction(posCentre);
+  G4VUserPrimaryGeneratorAction* gen_action = new PrimaryGeneratorAction(posCentre,myseed,config);
   runManager->SetUserAction(gen_action);
   G4cout << ">>> Define PrimaryGeneratorAction::end <<<" << G4endl;
 

@@ -1,6 +1,6 @@
 // Martin Goettlich @ DESY
 //
- 
+
 #include "EventAction.hh"
 #include "G4RunManager.hh"
 #include "G4Event.hh"
@@ -38,11 +38,11 @@ EventAction::~EventAction ()
 void EventAction::BeginOfEventAction (const G4Event* evt)
 {
   G4int evtNb = evt->GetEventID () ;
-  if ( evtNb%printModulo == 0 ) 
-  {
-    G4cout << "---> Begin of Event: " << evtNb << G4endl ;
-  }
-  
+  // if ( evtNb%printModulo == 0 )
+  // {
+    // G4cout << "---> Begin of Event: " << evtNb << G4endl ;
+  // }
+
   CreateTree::Instance ()->Clear () ;
 
   G4PrimaryVertex * vertex = evt->GetPrimaryVertex () ;
@@ -54,13 +54,13 @@ void EventAction::BeginOfEventAction (const G4Event* evt)
   G4double px = particle->GetPx () ;
   G4double py = particle->GetPy () ;
   G4double pz = particle->GetPz () ;
-  
+
   // --------------------- STORE INFO FOR X_0 / R_M ----------------------------- //
   int Radial_nSteps       = 5000;
   int Longitudinal_nSteps = 5000;
   CreateTree::Instance() -> Radial_stepLength       = 2500. / Radial_nSteps;       // in mm
   CreateTree::Instance() -> Longitudinal_stepLength = 2500. / Longitudinal_nSteps; // in mm
-  
+
   // INSTANCE RUN/EVENT IN TREE
   CreateTree::Instance ()->Event = evt->GetEventID () ;
   CreateTree::Instance ()->inputMomentum->at (0) = px/GeV;
@@ -70,6 +70,8 @@ void EventAction::BeginOfEventAction (const G4Event* evt)
   CreateTree::Instance ()->inputInitialPosition->at (0) = x/mm;
   CreateTree::Instance ()->inputInitialPosition->at (1) = y/mm;
   CreateTree::Instance ()->inputInitialPosition->at (2) = z/mm;
+
+
 }
 
 
@@ -77,8 +79,8 @@ void EventAction::BeginOfEventAction (const G4Event* evt)
 
 
 void EventAction::EndOfEventAction(const G4Event* evt)
-{ 
+{
   evt -> GetEventID();
-  
+
   CreateTree::Instance ()->Fill ();
 }

@@ -35,7 +35,10 @@
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4GeneralParticleSource.hh"
+#include "TH1F.h"
+#include "ConfigFile.hh"
 
+class G4ParticleGun;
 class G4Event;
 class G4GeneralParticleSource;
 
@@ -46,14 +49,30 @@ class G4GeneralParticleSource;
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 public:
-  PrimaryGeneratorAction(const G4ThreeVector& posCentre);
-  ~PrimaryGeneratorAction();
-  
+  PrimaryGeneratorAction(const G4ThreeVector& posCentre,G4long myseed,ConfigFile config);
+  virtual ~PrimaryGeneratorAction();
+
 public:
-  void GeneratePrimaries(G4Event*);
-  
+  virtual void GeneratePrimaries(G4Event*);
+  virtual void MakeEnergyHisto_GaGG_Ce_Mg();
+  virtual void MakeTimeHisto_GaGG_Ce_Mg();
+  virtual void MakeEnergyHisto_YAG_Ce();
+  virtual void MakeTimeHisto_YAG_Ce();
+
+
 private:
+  // G4ParticleGun* fParticleGun;
   G4GeneralParticleSource* gun;
+  TH1F *enHisto;
+  TH1F *tHisto;
+  int primaries;
+
+  // GAGG_Ce_Mg
+
+
+
+
+
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

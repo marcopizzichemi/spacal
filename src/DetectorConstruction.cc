@@ -371,8 +371,20 @@ DetectorConstruction::~DetectorConstruction ()
 
     G4VSolid * WiresS = new G4Tubs ("WiresS", 0., Wires_radius, Wires_dist, 0.*deg, 360.*deg);
 
-    G4LogicalVolume * PMTLV = new G4LogicalVolume (TubeS,PMTMaterial, "PMTLV");
+    G4LogicalVolume * PMTLV = new G4LogicalVolume (TubeS,PLEXMaterial, "PMTLV");
     G4LogicalVolume * WiresLV = new G4LogicalVolume (WiresS, WiresMaterial, "WiresLV");
+
+    G4VSolid * PVC_pmt_frontS = new G4Box ("PVC_pmt_frontS",0.5*module_xy, 0.5*module_yx,0.5*PMT_length);
+    G4VSolid * PVC_pmt_backS  = new G4Box ("PVC_pmt_backS" ,0.5*module_xy, 0.5*module_yx,0.5*PMT_length);;
+    G4LogicalVolume * PVC_pmt_frontLV = new G4LogicalVolume (PVC_pmt_frontS,PVCMaterial, "PVC_pmt_frontLV");
+    G4LogicalVolume * PVC_pmt_backLV  = new G4LogicalVolume (PVC_pmt_backS,PVCMaterial, "PVC_pmt_frontLV");
+
+    G4PVPlacement *PVC_pmt_frontPV = new G4PVPlacement (0, G4ThreeVector (0, 0,-0.5*(PLEX_dist+PMT_length+PLEX_depth*2+airGap*4 + airGap_abs) ),PVC_pmt_frontLV, "PVC_pmt_frontPV", worldLV, false, 0, checkOverlaps);
+
+    G4PVPlacement *PVC_pmt_backPV = new G4PVPlacement (0, G4ThreeVector (0, 0,+0.5*(PLEX_dist+PMT_length+PLEX_depth*2+airGap*4 + airGap_abs) ),PVC_pmt_backLV, "PVC_pmt_backPV", worldLV, false, 0, checkOverlaps);
+
+
+
 
     if (preconstr == 1)
     {
@@ -417,7 +429,7 @@ DetectorConstruction::~DetectorConstruction ()
           //-----------//
 
           Pname = Form("PMTSPV FRONT %d", iP);
-          new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,-0.5*(PLEX_dist+PMT_length+PLEX_depth*2+airGap*4 + airGap_abs) ),PMTLV, Pname, worldLV, false, 0, checkOverlaps);
+          new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,0 ),PMTLV, Pname, PVC_pmt_frontLV, false, 0, checkOverlaps);
 
           Pname = Form("LguidePV FRONT %d", iP);
           new G4PVPlacement (0, G4ThreeVector (PMTx,PMTy,-0.5*(PLEX_dist + PLEX_depth + airGap*2 + airGap_abs)), LguideLV, Pname, worldLV, false, 0, checkOverlaps);
@@ -430,7 +442,7 @@ DetectorConstruction::~DetectorConstruction ()
           rotationMatrix->rotateY(180.*deg);
 
           Pname = Form("PMTSPV BACK %d", iP);
-          new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,+0.5*(PLEX_dist+PMT_length+PLEX_depth*2+airGap*4 + airGap_abs) ),PMTLV, Pname, worldLV, false, 0, checkOverlaps);
+          new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,0 ),PMTLV, Pname, PVC_pmt_backLV, false, 0, checkOverlaps);
 
           Pname = Form("LguidePV BACK %d", iP);
           new G4PVPlacement (rotationMatrix, G4ThreeVector (PMTx,PMTy,+0.5*(PLEX_dist + PLEX_depth + airGap*2 + airGap_abs)), LguideLV, Pname, worldLV, false, 0, checkOverlaps);
@@ -543,7 +555,7 @@ DetectorConstruction::~DetectorConstruction ()
     G4VSolid * absorber1S = new G4Box ("absorber1S", 0.5 * module_xy, 0.5 * (module_yx), 0.5 * module_z) ;
     G4LogicalVolume * absorber1LV;
     absorber1LV = new G4LogicalVolume (absorber1S, AbMaterial, "absorber1LV") ;
-    new G4PVPlacement (0, G4ThreeVector (0., 0., - 0.5* (module_z + airGap_abs)), absorber1LV, "absorber1PV", calorimeterLV, false, 0, checkOverlaps) ;
+    G4PVPlacement *absorber1PV =  new G4PVPlacement (0, G4ThreeVector (0., 0., - 0.5* (module_z + airGap_abs)), absorber1LV, "absorber1PV", calorimeterLV, false, 0, checkOverlaps) ;
 
 
 
@@ -551,7 +563,7 @@ DetectorConstruction::~DetectorConstruction ()
     G4VSolid * absorber2S = new G4Box ("absorber2S", 0.5 * Second_module_xy, 0.5 * Second_module_yx, 0.5 * Second_module_z) ;
     G4LogicalVolume * absorber2LV;
     absorber2LV = new G4LogicalVolume (absorber2S, AbMaterial2, "absorber2LV") ;
-    new G4PVPlacement (0, G4ThreeVector (0., 0., 0.5* (module_z + airGap_abs)), absorber2LV, "absorber2PV", calorimeterLV, false, 0, checkOverlaps) ;
+    G4PVPlacement *absorber2PV = new G4PVPlacement (0, G4ThreeVector (0., 0., 0.5* (module_z + airGap_abs)), absorber2LV, "absorber2PV", calorimeterLV, false, 0, checkOverlaps) ;
 
     //thin layer of air between absorbers
 
@@ -596,10 +608,11 @@ DetectorConstruction::~DetectorConstruction ()
         // **************  ***************
         // #5
         G4PVPlacement *fiberPV;
+        G4PVPlacement *holePV;
         if (x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1)
         {
           name = Form("holePV %d",index);
-          fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber1LV, false, 0, checkOverlaps) ;
+          holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber1LV, false, 0, checkOverlaps) ;
 
           name = Form("fibre12SPV %d",index);
           fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre12SLV, name, absorber1LV, false, 0, checkOverlaps) ;
@@ -608,18 +621,19 @@ DetectorConstruction::~DetectorConstruction ()
         else if (x >= -1.5*fibres_x1 && x<= fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1 || x >= fibres_x1 && x<= 1.5*fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1 || x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= -1.5*fibres_y1 && y <= -0.5*fibres_y1 ||  x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= 0.5*fibres_y1 && y <= 1.5*fibres_y1 )
         {
           name = Form("holePV %d",index);
-          fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber1LV, false, 0, checkOverlaps) ;
+          holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber1LV, false, 0, checkOverlaps) ;
 
           name = Form("fibre1SPV %d",index);
           fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre1SLV, name, absorber1LV, false, 0, checkOverlaps) ;
         }
 
         else
-        {      name = Form("holePV %d",index);
-        fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber1LV, false, 0, checkOverlaps) ;
+        {
+          name = Form("holePV %d",index);
+          holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber1LV, false, 0, checkOverlaps) ;
 
-        name = Form("fibre13SPV %d",index);
-        fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre13SLV, name, absorber1LV, false, 0, checkOverlaps) ;
+          name = Form("fibre13SPV %d",index);
+          fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre13SLV, name, absorber1LV, false, 0, checkOverlaps) ;
       }
 
       indexion = index;
@@ -638,10 +652,25 @@ DetectorConstruction::~DetectorConstruction ()
       reflector_surf->SetModel(unified);
       reflector_surf->SetMaterialPropertiesTable(MyMaterials::ESR());
       G4LogicalBorderSurface* reflectorLB;
+      Surfname << "LB";
       reflectorLB = new G4LogicalBorderSurface(Surfname.str().c_str(),
                                                fiberPV,
                                                airLayerPV,
                                                reflector_surf);
+      //
+      std::stringstream absName;
+      absName << "Surface_hole_" << name << "_abs";
+      G4OpticalSurface* absSurface = new G4OpticalSurface(absName.str().c_str());
+      absSurface->SetType(dielectric_metal);
+      absSurface->SetFinish(ground);
+      absSurface->SetModel(unified);
+      absSurface->SetSigmaAlpha(0.1);
+      absSurface->SetMaterialPropertiesTable(MyMaterials::ABS_SURF());
+      G4LogicalBorderSurface* absLB;
+      absName << "LB";
+      absLB = new G4LogicalBorderSurface(absName.str().c_str(),                                                                           holePV,
+                             absorber1PV,
+                             absSurface);
 
 
 
@@ -685,12 +714,14 @@ DetectorConstruction::~DetectorConstruction ()
 
       std::string name;
       G4PVPlacement *fiberPV;
+      G4PVPlacement *holePV;
 
 
       // **************  ***************
       if (x >= -0.5*Second_fibres_x1 && x<= 0.5*Second_fibres_x1 && y >= -0.5*Second_fibres_y1 && y <= 0.5*Second_fibres_y1)
-      {      name = Form("holePV %d",index);
-      fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber2LV, false, 0, checkOverlaps) ;
+      {
+        name = Form("holePV %d",index);
+      holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber2LV, false, 0, checkOverlaps) ;
 
       name = Form("fibre22SPV %d",index);
       fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre22SLV, name, absorber2LV, false, 0, checkOverlaps) ;
@@ -703,7 +734,7 @@ DetectorConstruction::~DetectorConstruction ()
     else if (x >= -1.5*fibres_x1 && x<= fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1 || x >= fibres_x1 && x<= 1.5*fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1 || x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= -1.5*fibres_y1 && y <= -0.5*fibres_y1 ||  x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= 0.5*fibres_y1 && y <= 1.5*fibres_y1 )
     {
       name = Form("holePV %d",index);
-      fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber2LV, false, 0, checkOverlaps) ;
+      holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber2LV, false, 0, checkOverlaps) ;
 
       name = Form("fibre2SPV %d",index);
       fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre2SLV, name, absorber2LV, false, 0, checkOverlaps) ;
@@ -712,7 +743,7 @@ DetectorConstruction::~DetectorConstruction ()
     else
     {
       name = Form("holePV %d",index);
-      fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber2LV, false, 0, checkOverlaps) ;
+      holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber2LV, false, 0, checkOverlaps) ;
 
       name = Form("fibre23SPV %d",index);
       fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre23SLV, name, absorber2LV, false, 0, checkOverlaps) ;
@@ -731,10 +762,25 @@ DetectorConstruction::~DetectorConstruction ()
     reflector_surf->SetModel(unified);
     reflector_surf->SetMaterialPropertiesTable(MyMaterials::ESR());
     G4LogicalBorderSurface* reflectorLB;
+    Surfname << "LB";
     reflectorLB = new G4LogicalBorderSurface(Surfname.str().c_str(),
                                              fiberPV,
                                              airLayerPV,
                                              reflector_surf);
+    //
+    std::stringstream absName;
+    absName << "Surface_hole_" << name << "_abs";
+    G4OpticalSurface* absSurface = new G4OpticalSurface(absName.str().c_str());
+    absSurface->SetType(dielectric_metal);
+    absSurface->SetFinish(ground);
+    absSurface->SetModel(unified);
+    absSurface->SetSigmaAlpha(0.1);
+    absSurface->SetMaterialPropertiesTable(MyMaterials::ABS_SURF());
+    G4LogicalBorderSurface* absLB;
+    absName << "LB";
+    absLB = new G4LogicalBorderSurface(absName.str().c_str(),                                                                             holePV,
+                           absorber2PV,
+                           absSurface);
   } // loop on y direction
 
 
@@ -828,7 +874,7 @@ calorimeterLV->SetVisAttributes (VisAttCalorimeter) ;
 
 G4VisAttributes* VisAttPLEX = new G4VisAttributes (green) ;
 VisAttPLEX->SetVisibility (true) ;
-VisAttPLEX->SetForceWireframe (true) ;
+VisAttPLEX->SetForceWireframe (false) ;
 LguideLV->SetVisAttributes (VisAttPLEX) ;
 
 G4VisAttributes* VisAttPVC = new G4VisAttributes (brown) ;
@@ -857,53 +903,64 @@ G4VisAttributes* VisAttAirLayer = new G4VisAttributes (cyan) ;
 VisAttAirLayer->SetVisibility (true) ;
 VisAttAirLayer->SetForceWireframe (false) ;
 airLayerLV->SetVisAttributes (VisAttAirLayer) ;
+//
+// G4VisAttributes* VisAttAirLayer = new G4VisAttributes (cyan) ;
+// VisAttAirLayer->SetVisibility (true) ;
+// VisAttAirLayer->SetForceWireframe (false) ;
+// airLayerLV->SetVisAttributes (VisAttAirLayer) ;
+
+G4VisAttributes* VisAttPVC_pmt = new G4VisAttributes (red) ;
+VisAttPVC_pmt->SetVisibility (true) ;
+VisAttPVC_pmt->SetForceWireframe (true) ;
+PVC_pmt_backLV->SetVisAttributes (VisAttPVC_pmt) ;
+PVC_pmt_frontLV->SetVisAttributes (VisAttPVC_pmt) ;
 
 
 
 // ********* ************** * ***************   *********
 
 
-
+bool wireFrame = true;
 G4VisAttributes* VisAttHole = new G4VisAttributes(air);
 VisAttHole->SetVisibility(true);
-VisAttHole->SetForceWireframe(false);
+VisAttHole->SetForceWireframe(wireFrame);
 holeLV->SetVisAttributes(VisAttHole);
 
 G4VisAttributes* VisAttfibre1S = new G4VisAttributes (yellow) ;
 VisAttfibre1S->SetVisibility (true) ;
-VisAttfibre1S->SetForceWireframe (false) ;
+VisAttfibre1S->SetForceWireframe (wireFrame) ;
 fibre1SLV->SetVisAttributes (VisAttfibre1S) ;
 
 //______________________________
 
 G4VisAttributes* VisAttfibre12S = new G4VisAttributes (red) ;
 VisAttfibre12S->SetVisibility (true) ;
-VisAttfibre12S->SetForceWireframe (false) ;
+VisAttfibre12S->SetForceWireframe (wireFrame) ;
 fibre12SLV->SetVisAttributes (VisAttfibre12S) ;
 
 
 G4VisAttributes* VisAttfibre13S = new G4VisAttributes (green) ;
 VisAttfibre13S->SetVisibility (true) ;
-VisAttfibre13S->SetForceWireframe (false) ;
+VisAttfibre13S->SetForceWireframe (wireFrame) ;
 fibre13SLV->SetVisAttributes (VisAttfibre13S) ;
 
 //******** ***********  * ***************    ****************
 G4VisAttributes* VisAttfibre2S = new G4VisAttributes (yellow) ;
 VisAttfibre2S->SetVisibility (true) ;
-VisAttfibre2S->SetForceWireframe (false) ;
+VisAttfibre2S->SetForceWireframe (wireFrame) ;
 fibre2SLV->SetVisAttributes (VisAttfibre2S) ;
 
 //______________________________
 
 G4VisAttributes* VisAttfibre22S = new G4VisAttributes (red) ;
 VisAttfibre22S->SetVisibility (true) ;
-VisAttfibre22S->SetForceWireframe (false) ;
+VisAttfibre22S->SetForceWireframe (wireFrame) ;
 fibre22SLV->SetVisAttributes (VisAttfibre22S) ;
 
 
 G4VisAttributes* VisAttfibre23S = new G4VisAttributes (green) ;
 VisAttfibre23S->SetVisibility (true) ;
-VisAttfibre23S->SetForceWireframe (false) ;
+VisAttfibre23S->SetForceWireframe (wireFrame) ;
 fibre23SLV->SetVisAttributes (VisAttfibre23S) ;
 
 
@@ -1112,7 +1169,7 @@ void DetectorConstruction::initializeMaterials ()
   else if ( fibre_material == 3 ) ClMaterial = MyMaterials::DSB_Ce () ;
   else if ( fibre_material == 4 ) ClMaterial = MyMaterials::LuAG_Ce () ;
   else if ( fibre_material == 5 ) ClMaterial = MyMaterials::YAG_Ce () ;
-  else if ( fibre_material == 6 ) ClMaterial = MyMaterials::GAGG_Ce() ;
+  else if ( fibre_material == 6 ) ClMaterial = MyMaterials::GAGG_Ce_Mg() ;
   else if ( fibre_material == 7 ) ClMaterial = MyMaterials::Water() ;
 
   else
@@ -1131,7 +1188,7 @@ void DetectorConstruction::initializeMaterials ()
   else if ( fibre_material1 == 3 ) ClSSMaterial = MyMaterials::DSB_Ce () ;
   else if ( fibre_material1 == 4 ) ClSSMaterial = MyMaterials::LuAG_Ce () ;
   else if ( fibre_material1 == 5 ) ClSSMaterial = MyMaterials::YAG_Ce () ;
-  else if ( fibre_material1 == 6 ) ClSSMaterial = MyMaterials::GAGG_Ce() ;
+  else if ( fibre_material1 == 6 ) ClSSMaterial = MyMaterials::GAGG_Ce_Mg() ;
   else if ( fibre_material1 == 7 ) ClSSMaterial = MyMaterials::Water() ;
   else
   {
@@ -1146,7 +1203,7 @@ void DetectorConstruction::initializeMaterials ()
   else if ( fibre_material2 == 3 ) ClSSSMaterial = MyMaterials::DSB_Ce () ;
   else if ( fibre_material2 == 4 ) ClSSSMaterial = MyMaterials::LuAG_Ce () ;
   else if ( fibre_material2 == 5 ) ClSSSMaterial = MyMaterials::YAG_Ce () ;
-  else if ( fibre_material2 == 6 ) ClSSSMaterial = MyMaterials::GAGG_Ce() ;
+  else if ( fibre_material2 == 6 ) ClSSSMaterial = MyMaterials::GAGG_Ce_Mg() ;
   else if ( fibre_material2 == 7 ) ClSSSMaterial = MyMaterials::Water() ;
   else
   {
@@ -1163,7 +1220,7 @@ void DetectorConstruction::initializeMaterials ()
   else if ( Second_fibre_material == 3 ) Cl3Material = MyMaterials::DSB_Ce () ;
   else if ( Second_fibre_material == 4 ) Cl3Material = MyMaterials::LuAG_Ce () ;
   else if ( Second_fibre_material == 5 ) Cl3Material = MyMaterials::YAG_Ce () ;
-  else if ( Second_fibre_material == 6 ) Cl3Material = MyMaterials::GAGG_Ce() ;
+  else if ( Second_fibre_material == 6 ) Cl3Material = MyMaterials::GAGG_Ce_Mg() ;
   else if ( Second_fibre_material == 7 ) Cl3Material = MyMaterials::Water() ;
 
   else
@@ -1182,7 +1239,7 @@ void DetectorConstruction::initializeMaterials ()
   else if ( Second_fibre_material1 == 3 ) Cl4SSMaterial = MyMaterials::DSB_Ce () ;
   else if ( Second_fibre_material1 == 4 ) Cl4SSMaterial = MyMaterials::LuAG_Ce () ;
   else if ( Second_fibre_material1 == 5 ) Cl4SSMaterial = MyMaterials::YAG_Ce () ;
-  else if ( Second_fibre_material1 == 6 ) Cl4SSMaterial = MyMaterials::GAGG_Ce() ;
+  else if ( Second_fibre_material1 == 6 ) Cl4SSMaterial = MyMaterials::GAGG_Ce_Mg() ;
   else if ( Second_fibre_material1 == 7 ) Cl4SSMaterial = MyMaterials::Water() ;
   else
   {
@@ -1198,7 +1255,7 @@ void DetectorConstruction::initializeMaterials ()
   else if ( Second_fibre_material2 == 3 ) Cl43SSMaterial = MyMaterials::DSB_Ce () ;
   else if ( Second_fibre_material2 == 4 ) Cl43SSMaterial = MyMaterials::LuAG_Ce () ;
   else if ( Second_fibre_material2 == 5 ) Cl43SSMaterial = MyMaterials::YAG_Ce () ;
-  else if ( Second_fibre_material2 == 6 ) Cl43SSMaterial = MyMaterials::GAGG_Ce() ;
+  else if ( Second_fibre_material2 == 6 ) Cl43SSMaterial = MyMaterials::GAGG_Ce_Mg() ;
   else if ( Second_fibre_material2 == 7 ) Cl43SSMaterial = MyMaterials::Water() ;
   else
   {

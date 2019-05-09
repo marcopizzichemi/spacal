@@ -26,7 +26,7 @@
 //
 // $Id: RunAction.cc,v 1.10 2006-06-29 17:54:31 gunter Exp $
 // GEANT4 tag $Name: not supported by cvs2svn $
-// 
+//
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -36,6 +36,8 @@
 
 #include "G4Timer.hh"
 #include "G4Run.hh"
+#include "CreateTree.hh"
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -55,16 +57,20 @@ RunAction::~RunAction()
 
 void RunAction::BeginOfRunAction(const G4Run* aRun)
 {
-  G4cout << "### Run :: " << aRun->GetRunID() << " started ..." << G4endl; 
+  G4cout << "### Run :: " << aRun->GetRunID() << " started ..." << G4endl;
+  // set event number in photons tree
+  CreateTree::Instance ()->eventNumber = aRun->GetRunID();
   timer->Start();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void RunAction::EndOfRunAction(const G4Run* aRun)
-{   
+{
+
+
   timer->Stop();
-  G4cout << "number of event = " << aRun->GetNumberOfEvent() 
+  G4cout << "number of event = " << aRun->GetNumberOfEvent()
          << " " << *timer << G4endl;
 }
 
