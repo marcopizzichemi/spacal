@@ -146,6 +146,10 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readInto (preconstr, "preconstr") ;
 
 
+  config.readInto (surface_lg,"surface_lg");
+  config.readInto (glue_interface,"glue_interface");
+  config.readInto (cone_material,"cone_material");
+
   B_field_intensity = config.read<double>("B_field_intensity") * tesla ;
 
 
@@ -358,7 +362,15 @@ DetectorConstruction::~DetectorConstruction ()
     = new G4SubtractionSolid("coneSolid", coneS, subtract,
     0,  G4ThreeVector(0.,0.,0.));
 
-    G4LogicalVolume * LguideLV = new G4LogicalVolume (coneSolid,PLEXMaterial,"LguideLV");
+    // G4LogicalVolume * LguideLV = new G4LogicalVolume (coneSolid,WoMaterial,"LguideLV");
+    G4LogicalVolume * LguideLV = new G4LogicalVolume (coneSolid,ConeMaterial,"LguideLV"); //plexiglass
+    //air light guide
+    G4VSolid * air_LG_front_S = new G4Box ("air_LG_front_S ",0.5*module_xy, 0.5*module_yx,0.5*PLEX_depth);
+    G4VSolid * air_LG_back_S = new G4Box ("air_LG_back_S ",0.5*module_xy, 0.5*module_yx,0.5*PLEX_depth);
+    G4LogicalVolume *air_LG_front_LV = new G4LogicalVolume (air_LG_front_S,WoMaterial, "air_LG_front_LV");
+    G4LogicalVolume *air_LG_back_LV = new G4LogicalVolume (air_LG_back_S,WoMaterial, "air_LG_back_LV");
+
+
 
 
     // G4LogicalVolume * coneLV = new G4LogicalVolume (coneSolid,PLEXMaterial,"coneLV");
@@ -375,13 +387,27 @@ DetectorConstruction::~DetectorConstruction ()
     G4LogicalVolume * WiresLV = new G4LogicalVolume (WiresS, WiresMaterial, "WiresLV");
 
     G4VSolid * PVC_pmt_frontS = new G4Box ("PVC_pmt_frontS",0.5*module_xy, 0.5*module_yx,0.5*PMT_length);
-    G4VSolid * PVC_pmt_backS  = new G4Box ("PVC_pmt_backS" ,0.5*module_xy, 0.5*module_yx,0.5*PMT_length);;
+    G4VSolid * PVC_pmt_backS  = new G4Box ("PVC_pmt_backS" ,0.5*module_xy, 0.5*module_yx,0.5*PMT_length);
     G4LogicalVolume * PVC_pmt_frontLV = new G4LogicalVolume (PVC_pmt_frontS,PVCMaterial, "PVC_pmt_frontLV");
     G4LogicalVolume * PVC_pmt_backLV  = new G4LogicalVolume (PVC_pmt_backS,PVCMaterial, "PVC_pmt_frontLV");
 
-    G4PVPlacement *PVC_pmt_frontPV = new G4PVPlacement (0, G4ThreeVector (0, 0,-0.5*(PLEX_dist+PMT_length+PLEX_depth*2+airGap*4 + airGap_abs) ),PVC_pmt_frontLV, "PVC_pmt_frontPV", worldLV, false, 0, checkOverlaps);
 
+
+    G4PVPlacement *PVC_pmt_frontPV = new G4PVPlacement (0, G4ThreeVector (0, 0,-0.5*(PLEX_dist+PMT_length+PLEX_depth*2+airGap*4 + airGap_abs) ),PVC_pmt_frontLV, "PVC_pmt_frontPV", worldLV, false, 0, checkOverlaps);
     G4PVPlacement *PVC_pmt_backPV = new G4PVPlacement (0, G4ThreeVector (0, 0,+0.5*(PLEX_dist+PMT_length+PLEX_depth*2+airGap*4 + airGap_abs) ),PVC_pmt_backLV, "PVC_pmt_backPV", worldLV, false, 0, checkOverlaps);
+
+    G4PVPlacement *air_LG_front_PV = new G4PVPlacement(0, G4ThreeVector(0 ,0 , -0.5*(PLEX_dist + PLEX_depth + airGap*2 + airGap_abs)), air_LG_front_LV, "air_LG_front_PV", worldLV, false, 0, checkOverlaps);
+    G4PVPlacement  *air_LG_back_PV = new G4PVPlacement(0, G4ThreeVector(0 ,0 , +0.5*(PLEX_dist + PLEX_depth + airGap*2 + airGap_abs)), air_LG_back_LV , "air_LG_back_PV" , worldLV, false, 0, checkOverlaps);
+
+    G4VSolid *glue_S = new G4Box ("glue_S", 0.5*module_xy, 0.5*module_yx, 0.5*airGap);
+    G4LogicalVolume * glue_LV = new G4LogicalVolume (glue_S,GlueMaterial, "glue_LV");
+
+    G4PVPlacement  *gluePV_front = new G4PVPlacement(0, G4ThreeVector(0 ,0 , -0.5*(PLEX_dist + airGap + airGap_abs )), glue_LV, "gluePV_front", worldLV, false, 0, checkOverlaps);
+    G4PVPlacement  *gluePV_back  = new G4PVPlacement(0, G4ThreeVector(0 ,0 , +0.5*(PLEX_dist + airGap + airGap_abs )), glue_LV, "gluePV_back" , worldLV, false, 0, checkOverlaps);
+
+    G4PVPlacement  *glue_pmt_PV_front = new G4PVPlacement(0, G4ThreeVector(0 ,0 , -0.5*(PLEX_dist + 3*airGap + airGap_abs +PLEX_depth*2)), glue_LV, "glue_pmt_PV_front", worldLV, false, 0, checkOverlaps);
+    G4PVPlacement  *glue_pmt_PV_back  = new G4PVPlacement(0, G4ThreeVector(0 ,0 , +0.5*(PLEX_dist + 3*airGap + airGap_abs +PLEX_depth*2)), glue_LV, "glue_pmt_PV_back" , worldLV, false, 0, checkOverlaps);
+
 
 
 
@@ -432,7 +458,39 @@ DetectorConstruction::~DetectorConstruction ()
           new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,0 ),PMTLV, Pname, PVC_pmt_frontLV, false, 0, checkOverlaps);
 
           Pname = Form("LguidePV FRONT %d", iP);
-          new G4PVPlacement (0, G4ThreeVector (PMTx,PMTy,-0.5*(PLEX_dist + PLEX_depth + airGap*2 + airGap_abs)), LguideLV, Pname, worldLV, false, 0, checkOverlaps);
+          G4PVPlacement *LG_front_PV = new G4PVPlacement (0, G4ThreeVector (PMTx,PMTy,0), LguideLV, Pname, air_LG_front_LV, false, 0, checkOverlaps);
+
+          //optical surface between cone and air cone
+          if(surface_lg)
+          {
+            std::stringstream Surfname_front;
+            Surfname_front << "Surface_" << Pname << "_air_front";
+            G4OpticalSurface* reflector_surf_front = new G4OpticalSurface(Surfname_front.str().c_str());
+            reflector_surf_front->SetType(dielectric_metal);
+            reflector_surf_front->SetFinish(polished);
+            reflector_surf_front->SetModel(unified);
+            reflector_surf_front->SetMaterialPropertiesTable(MyMaterials::ESR());
+            G4LogicalBorderSurface* reflectorLB_front;
+            Surfname_front << "LB";
+            reflectorLB_front = new G4LogicalBorderSurface(Surfname_front.str().c_str(),
+                                                          LG_front_PV,
+                                                          air_LG_front_PV,
+                                                         reflector_surf_front);
+            //optical surface between air cone and cone
+            std::stringstream SurfnameInv_front;
+            SurfnameInv_front << "SurfaceInv_" << Pname << "_air_front";
+            G4OpticalSurface* reflectorInv_surf_front = new G4OpticalSurface(SurfnameInv_front.str().c_str());
+            reflectorInv_surf_front->SetType(dielectric_metal);
+            reflectorInv_surf_front->SetFinish(polished);
+            reflectorInv_surf_front->SetModel(unified);
+            reflectorInv_surf_front->SetMaterialPropertiesTable(MyMaterials::ESR());
+            G4LogicalBorderSurface* reflectorLBInv_front;
+            SurfnameInv_front << "LB";
+            reflectorLBInv_front = new G4LogicalBorderSurface(SurfnameInv_front.str().c_str(),
+                                                              air_LG_front_PV,
+                                                              LG_front_PV,
+                                                             reflectorInv_surf_front);
+          }
 
           //-----------//
           // BACK      //
@@ -445,7 +503,42 @@ DetectorConstruction::~DetectorConstruction ()
           new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,0 ),PMTLV, Pname, PVC_pmt_backLV, false, 0, checkOverlaps);
 
           Pname = Form("LguidePV BACK %d", iP);
-          new G4PVPlacement (rotationMatrix, G4ThreeVector (PMTx,PMTy,+0.5*(PLEX_dist + PLEX_depth + airGap*2 + airGap_abs)), LguideLV, Pname, worldLV, false, 0, checkOverlaps);
+          G4PVPlacement *LG_back_PV = new G4PVPlacement (rotationMatrix, G4ThreeVector (PMTx,PMTy, 0) , LguideLV, Pname, air_LG_back_LV, false, 0, checkOverlaps);
+
+
+          if(surface_lg)
+          {
+            //optical surface between cone and air cone
+            std::stringstream Surfname_back;
+            Surfname_back << "Surface_" << Pname << "_air_back";
+            G4OpticalSurface* reflector_surf_back = new G4OpticalSurface(Surfname_back.str().c_str());
+            reflector_surf_back->SetType(dielectric_metal);
+            reflector_surf_back->SetFinish(polished);
+            reflector_surf_back->SetModel(unified);
+            reflector_surf_back->SetMaterialPropertiesTable(MyMaterials::ESR());
+            G4LogicalBorderSurface* reflectorLB_back;
+            Surfname_back << "LB";
+            reflectorLB_back = new G4LogicalBorderSurface(Surfname_back.str().c_str(),
+                                                          LG_back_PV,
+                                                          air_LG_back_PV,
+                                                         reflector_surf_back);
+            //optical surface between air cone and cone
+            std::stringstream SurfnameInv_back;
+            SurfnameInv_back << "SurfaceInv_" << Pname << "_air_back";
+            G4OpticalSurface* reflectorInv_surf_back = new G4OpticalSurface(SurfnameInv_back.str().c_str());
+            reflectorInv_surf_back->SetType(dielectric_metal);
+            reflectorInv_surf_back->SetFinish(polished);
+            reflectorInv_surf_back->SetModel(unified);
+            reflectorInv_surf_back->SetMaterialPropertiesTable(MyMaterials::ESR());
+            G4LogicalBorderSurface* reflectorLBInv_back;
+            SurfnameInv_back << "LB";
+            reflectorLBInv_back = new G4LogicalBorderSurface(SurfnameInv_back.str().c_str(),
+                                                              air_LG_back_PV,
+                                                              LG_back_PV,
+                                                             reflectorInv_surf_back);
+
+          }
+
 
         }
       }
@@ -643,7 +736,7 @@ DetectorConstruction::~DetectorConstruction ()
 
 
 
-      //optical surface between fiber and thin air
+      //optical surface between fiber and thin air layer
       std::stringstream Surfname;
       Surfname << "Surface_" << name << "_airLayer";
       G4OpticalSurface* reflector_surf = new G4OpticalSurface(Surfname.str().c_str());
@@ -657,7 +750,7 @@ DetectorConstruction::~DetectorConstruction ()
                                                fiberPV,
                                                airLayerPV,
                                                reflector_surf);
-      //
+      //optical surf from air gap to abs
       std::stringstream absName;
       absName << "Surface_hole_" << name << "_abs";
       G4OpticalSurface* absSurface = new G4OpticalSurface(absName.str().c_str());
@@ -668,7 +761,7 @@ DetectorConstruction::~DetectorConstruction ()
       absSurface->SetMaterialPropertiesTable(MyMaterials::ABS_SURF());
       G4LogicalBorderSurface* absLB;
       absName << "LB";
-      absLB = new G4LogicalBorderSurface(absName.str().c_str(),                                                                           holePV,
+      absLB = new G4LogicalBorderSurface(absName.str().c_str(),                                                                                       holePV,
                              absorber1PV,
                              absSurface);
 
@@ -872,6 +965,13 @@ VisAttCalorimeter->SetVisibility (true) ;
 VisAttCalorimeter->SetForceWireframe (true) ;
 calorimeterLV->SetVisAttributes (VisAttCalorimeter) ;
 
+
+G4VisAttributes* VisAttGlue = new G4VisAttributes (green) ;
+VisAttGlue->SetVisibility (true) ;
+VisAttGlue->SetForceWireframe (true) ;
+glue_LV->SetVisAttributes (VisAttGlue) ;
+
+
 G4VisAttributes* VisAttPLEX = new G4VisAttributes (green) ;
 VisAttPLEX->SetVisibility (true) ;
 VisAttPLEX->SetForceWireframe (false) ;
@@ -914,6 +1014,12 @@ VisAttPVC_pmt->SetVisibility (true) ;
 VisAttPVC_pmt->SetForceWireframe (true) ;
 PVC_pmt_backLV->SetVisAttributes (VisAttPVC_pmt) ;
 PVC_pmt_frontLV->SetVisAttributes (VisAttPVC_pmt) ;
+
+G4VisAttributes* VisAtt_air_LG = new G4VisAttributes (blue) ;
+VisAtt_air_LG->SetVisibility (true) ;
+VisAtt_air_LG->SetForceWireframe (true) ;
+air_LG_back_LV->SetVisAttributes (VisAtt_air_LG) ;
+air_LG_front_LV->SetVisAttributes (VisAtt_air_LG) ;
 
 
 
@@ -1093,6 +1199,25 @@ void DetectorConstruction::initializeMaterials ()
   }
   G4cout << "Wo. material: "<< WoMaterial << G4endl ;
 
+  GlueMaterial = NULL;
+  if      ( glue_interface == 0 ) GlueMaterial = WoMaterial;
+  else if ( glue_interface == 1 ) GlueMaterial = MyMaterials::OpticalGrease();
+  else
+  {
+    G4cerr << "<DetectorConstructioninitializeMaterials>: Invalid glue material specifier " << glue_interface << G4endl ;
+    exit (-1) ;
+  }
+  G4cout << "Glue material: "<< GlueMaterial << G4endl ;
+
+  ConeMaterial  = NULL;
+  if      ( cone_material == 0 ) ConeMaterial = WoMaterial;
+  else if ( cone_material == 1 ) ConeMaterial = MyMaterials::PLEX () ;
+  else
+  {
+    G4cerr << "<DetectorConstructioninitializeMaterials>: Invalid cone material specifier " << cone_material << G4endl ;
+    exit (-1) ;
+  }
+  G4cout << "Cone material: "<< ConeMaterial << G4endl ;
 
   AbMaterial = NULL ;
   if      ( abs_material == 1 ) AbMaterial = MyMaterials::Brass () ;

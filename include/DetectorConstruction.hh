@@ -62,35 +62,35 @@
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-  
+
   //! ctor
   DetectorConstruction  () ;
   DetectorConstruction  (const string& configFileName) ;
-  
+
   //! dtor
   ~DetectorConstruction () ;
-  
+
   //! construct method
   G4VPhysicalVolume* Construct () ;
-  
+
   //! other methods
   G4double GetModule_z () const { return module_z ; } ;
-  
+
   void initializeMaterials () ;
   void ConstructField () ;
-  
+
   Fiber* GetFiber() { return &fib ; } ;
-  
-  
+
+
 private:
   G4bool    checkOverlaps ;
-  
+
   G4double  expHall_x ;
   G4double  expHall_y ;
   G4double  expHall_z ;
-  
+
   G4int    world_material ;    // world material
-  
+
   G4int    abs_material ;    // absorber material
   G4int    Second_abs_material ;    // absorber material in second sections
   G4double W_fraction ;      // fraction of Tungsten in the alloy
@@ -130,7 +130,10 @@ G4double lp_mat;
 G4double lp_x;
 G4double lp_y;
 G4int preconstr;
- 
+G4int surface_lg;
+G4int glue_interface;
+G4int cone_material;
+
 
 
 
@@ -144,9 +147,9 @@ G4int preconstr;
   G4int    postshower;       // flag to place a postshower behind the module
   G4int second;             // off/on secondary fibres
   G4int Second_second;             // off/on secondary fibres in 2nd section
-  
+
   G4double margin ;               // minimum distance between fibres and tower sides
-G4double margin2 ;  
+G4double margin2 ;
   G4int    nFibresAlongX ;        // number of fibres along the Y side of the calo tower
   G4int    nFibresAlongY ;        // number of fibres along the Y side of the calo tower
   G4int    nFibresAlongX1 ;        // number of secondary fibres along the  side of the calo tower inside
@@ -167,7 +170,7 @@ G4double margin2 ;
   G4double startAY;
 
   G4int    nCellsAlongX;
-  G4int    nCellsAlongY; 
+  G4int    nCellsAlongY;
 
 
 
@@ -183,7 +186,7 @@ G4double margin2 ;
   G4double Second_startY1;
   // FIXME put this in, in future
   //G4Double  tolerance ;            // minimum distance between fibre and module side
-  
+
   G4int    fibre_scheme ;
   G4int    fibre_material ;
   G4int fibre_material1;
@@ -198,31 +201,31 @@ G4double margin2 ;
   G4double fibre_cladRIndex;
   G4int    fibre_isSquare;
   G4double fibre_radius ;
-  G4double fibre_length ;      
+  G4double fibre_length ;
   G4double fibre_distance ;    // distance between fibres
 
  G4double Second_fibre_radius ;
-  G4double Second_fibre_length ;      
+  G4double Second_fibre_length ;
   G4double Second_fibre_distance ;    // distance between fibres
 
   G4double fibre_absLength ;   // absorption length in the fiber
-  
+
   G4int gap_material ;
   G4double gap_l ;
-  
+
   G4int det_material ;
   G4double det_l ;
-    
+
   G4double depth ;
-  
+
   std::vector<G4double> attLengths;
-  
+
   G4UniformMagField * B_field ;
-  G4bool   B_field_IsInitialized ; 
+  G4bool   B_field_IsInitialized ;
   G4double B_field_intensity ;     // magnetic field, in units of Tesla
-  
+
   Fiber fib ;
-  
+
   //Materials
   G4Material* WoMaterial ;
   G4Material* AbMaterial ;
@@ -237,13 +240,16 @@ G4double margin2 ;
   G4Material* WiresMaterial;
  G4Material* PlaneMaterial;
 
+  G4Material* GlueMaterial ;
+  G4Material* ConeMaterial ;
+
   G4Material* Cl3Material ;
   G4Material* Cl4SSMaterial;
  G4Material* Cl43SSMaterial;
 
   G4Material* GaMaterial ;
   G4Material* DeMaterial ;
- 
+
 } ;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
