@@ -191,13 +191,7 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
         }
       }
       boundaryStatus = boundary->GetStatus();
-      // std::cout << boundaryStatus << std::endl;
-      // std::cout << FresnelRefraction << std::endl;
-
-      // if((boundaryStatus == NoRINDEX))
-      // {
-      //   std::cout << "aaaaaa " << thePrePVName << " "  << thePostPVName << std::endl;
-      // }
+      
       if((boundaryStatus == FresnelRefraction) && (thePostPVName.contains("PMTSPV")))
       // if((boundaryStatus == FresnelRefraction ))
       {

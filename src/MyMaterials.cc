@@ -1519,6 +1519,8 @@ G4Material* MyMaterials::GAGG_Ce_Mg() // Gadolinium Gallium Aluminum Garnet - un
 5.36797*eV, 5.48673*eV, 5.61086*eV, 5.74074*eV, 5.87678*eV, 6.01942*eV, 6.16915*eV, 6.32653*eV,
 6.49215*eV};
 
+
+
   G4double Absorption[nEntries_ABS] =
     {1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm, 1000.*mm,
 1000.*mm, 950.*mm, 900.*mm, 850.*mm, 800.*mm, 750.*mm, 700.*mm, 650.*mm, 600.*mm, 600.*mm, 550.*mm,
@@ -1534,6 +1536,11 @@ G4Material* MyMaterials::GAGG_Ce_Mg() // Gadolinium Gallium Aluminum Garnet - un
 0.5*mm, 0.5*mm, 0.926322*mm, 0.925969*mm, 0.5*mm, 0.5*mm, 1.19071*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm,
 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 0.5*mm, 1.25215*mm, 1.07403*mm,
 1.16123*mm, 1.22498*mm};
+  // const G4int nEntries_ABS = 2;
+  // G4double PhotonEnergy_ABS[nEntries_ABS] =  {1.55*eV, 6.49215*eV};
+  // G4double Absorption[nEntries_ABS]       =  {100*mm,100*mm};
+
+
 
   //emission spectrum
   const G4int NUMENTRIES_1 = 132;
@@ -1769,6 +1776,23 @@ G4MaterialPropertiesTable* MyMaterials::ABS_SURF()
   return surfPT;
 }
 
+
+
+G4MaterialPropertiesTable* MyMaterials::crystal_depo_SURF()
+{
+  G4MaterialPropertiesTable *crystalReal_surf = new G4MaterialPropertiesTable();
+  const G4int Ndepo = 2;
+  G4double depoEnergy[Ndepo] = {1*eV, 6*eV};
+  G4double specularlobeRealVector[Ndepo] = {1, 1};
+  G4double specularspikeRealVector[Ndepo] = {0, 0};
+  G4double backscatterRealVector[Ndepo] = {0,0};
+  crystalReal_surf->AddProperty("SPECULARLOBECONSTANT",depoEnergy,specularlobeRealVector,Ndepo);
+  crystalReal_surf->AddProperty("SPECULARSPIKECONSTANT",depoEnergy,specularspikeRealVector,Ndepo);
+  crystalReal_surf->AddProperty("BACKSCATTERCONSTANT",depoEnergy,backscatterRealVector,Ndepo);
+  return crystalReal_surf;
+}
+
+
 G4double MyMaterials::CalculateSellmeier (int size, G4double indexZero, G4double *nVec, G4double *lVec, G4double wavelength)
 {
   /*------http://gentitfx.fr/SLitrani/code/SLitraniCode/TLitSellmeier.html----*/
@@ -1787,6 +1811,9 @@ G4double MyMaterials::CalculateSellmeier (int size, G4double indexZero, G4double
 
   return sqrt(partial);
 }
+
+
+
 
 
 

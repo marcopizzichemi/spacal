@@ -74,7 +74,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(const G4ThreeVector& posCentre , 
 
   //gps->GetCurrentSource()->GetEneDist()->SetMonoEnergy(0.511*MeV);
   //gps->GetCurrentSource()->GetAngDist()->SetParticleMomentumDirection(G4ThreeVector(0.,-1.,0.));
-  gps->GetCurrentSource()->GetPosDist()->SetCentreCoords(posCentre);
+  // gps->GetCurrentSource()->GetPosDist()->SetCentreCoords(posCentre);
 
   gun = gps;
   // G4int n_particle = 1;

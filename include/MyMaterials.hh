@@ -46,9 +46,10 @@ public:
   static G4Material* CuAir(); //PMT tube
   static G4Material* Cu(); // Wires
 
-  static G4MaterialPropertiesTable* ESR(); // ESR surface
-  static G4MaterialPropertiesTable* ABS_SURF();
-
+  static G4MaterialPropertiesTable* ESR();      // ESR reflector surface
+  static G4MaterialPropertiesTable* ABS_SURF(); // Absorber internal surface
+  static G4MaterialPropertiesTable* crystal_depo_SURF(); // crystal lateral surface
+  
   static G4double fromNmToEv(G4double wavelength);
   static G4double fromEvToNm(G4double energy);
   static G4double CalculateSellmeier(int size, G4double indexZero, G4double *nVec, G4double *lVec, G4double wavelength);

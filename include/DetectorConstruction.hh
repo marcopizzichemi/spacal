@@ -58,6 +58,9 @@
 #include "G4UniformMagField.hh"
 
 
+#include "Absorber.hh"
+
+
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -73,11 +76,12 @@ public:
   //! construct method
   G4VPhysicalVolume* Construct () ;
 
-  //! other methods
-  G4double GetModule_z () const { return module_z ; } ;
+  // ! other methods
+  G4double GetModule_z () const { return 0.0 ; } ; // FIXME hardocoded now because of multi modules. What was its purpose?
 
   void initializeMaterials () ;
   void ConstructField () ;
+  void ConstructInterface(G4LogicalVolume *moduleLV,  std::string moduleName);
 
   Fiber* GetFiber() { return &fib ; } ;
 
@@ -91,132 +95,147 @@ private:
 
   G4int    world_material ;    // world material
 
-  G4int    abs_material ;    // absorber material
-  G4int    Second_abs_material ;    // absorber material in second sections
+  // G4int    abs_material ;    // absorber material
+  // G4int    Second_abs_material ;    // absorber material in second sections
   G4double W_fraction ;      // fraction of Tungsten in the alloy
-  G4double Second_W_fraction ;      // fraction of Tungsten in the alloy Secondsection (if needed)
-  G4double hole_radius ;     // radius of the holes
-  G4double module_z ;        // will be set as fibre length
-  G4double Second_module_z ;        // will be set as Second_fibre length
-
-  G4double module_xy ;       // size of the calo tower containing fibres
-  G4double module_yx ;
-  G4double fibres_x ;     //size of rectangle containing fibres inside module
-  G4double fibres_y ;
- G4double fibres_x1 ;     //size of rectangle containing fibres inside module
-  G4double fibres_y1 ;
- G4double absorber_x ;     //size of rectangle containing fibres inside module
-  G4double absorber_y ;
-
-  // Beam-test configuration
-  // -------------
-  G4double PLEX_dist;
-  G4double PLEX_depth;
-  G4double PVC_dist;
-  G4double PVC_depth;
-  G4double PMT_diam;
-  G4double Wires_diam;
-  G4double PMT_radius;
-  G4double PMT_length;
-  G4double Wires_radius;
-  G4double Wires_dist;
-
-
-  // Lead plane
-  G4int lead_plane;
-G4double lp_dist;
-G4double lp_depth;
-G4double lp_mat;
-G4double lp_x;
-G4double lp_y;
-G4int preconstr;
-G4int surface_lg;
-G4int glue_interface;
-G4int cone_material;
-
-
-
-
-
-  G4double Second_module_xy ;       // size of the calo tower containing fibres
-  G4double Second_module_yx ;
-  G4double Second_fibres_x ;     //size of rectangle containing fibres inside module
-  G4double Second_fibres_y ;
- G4double Second_fibres_x1 ;     //size of rectangle containing fibres inside module
-  G4double Second_fibres_y1 ;
-  G4int    postshower;       // flag to place a postshower behind the module
-  G4int second;             // off/on secondary fibres
-  G4int Second_second;             // off/on secondary fibres in 2nd section
-
-  G4double margin ;               // minimum distance between fibres and tower sides
-G4double margin2 ;
-  G4int    nFibresAlongX ;        // number of fibres along the Y side of the calo tower
-  G4int    nFibresAlongY ;        // number of fibres along the Y side of the calo tower
-  G4int    nFibresAlongX1 ;        // number of secondary fibres along the  side of the calo tower inside
-  G4int    nFibresAlongY1 ;        // number of secondary  fibres along the Y side of the calo tower inside
-  G4double fibreDistanceAlongX;
-  G4double fibreDistanceAlongY;
-
- G4double Second_margin ;               // minimum distance between fibres and tower sides
-  G4int    Second_nFibresAlongX ;        // number of fibres along the Y side of the calo tower
-  G4int    Second_nFibresAlongY ;        // number of fibres along the Y side of the calo tower
-  G4int    Second_nFibresAlongX1 ;        // number of secondary fibres along the  side of the calo tower inside
-  G4int    Second_nFibresAlongY1 ;        // number of secondary  fibres along the Y side of the calo tower inside
-  G4double Second_fibreDistanceAlongX;
-  G4double Second_fibreDistanceAlongY;
-
-  // For absorber's cells
-  G4double startAX;
-  G4double startAY;
-
-  G4int    nCellsAlongX;
-  G4int    nCellsAlongY;
+  // G4double Second_W_fraction ;      // fraction of Tungsten in the alloy Secondsection (if needed)
+  // G4double hole_radius ;     // radius of the holes
+  // // G4double module_z ;        // will be set as fibre length
+  // G4double Second_module_z ;        // will be set as Second_fibre length
+  //
+  // G4double module_xy ;       // size of the calo tower containing fibres
+  // G4double module_yx ;
+  // G4double fibres_x ;     //size of rectangle containing fibres inside module
+  // G4double fibres_y ;
+  // G4double fibres_x1 ;     //size of rectangle containing fibres inside module
+  // G4double fibres_y1 ;
+  // G4double absorber_x ;     //size of rectangle containing fibres inside module
+  // G4double absorber_y ;
+  //
+  // // Beam-test configuration
+  // // -------------
+  // G4double PLEX_dist;
+  // G4double PLEX_depth;
+  // G4double PVC_dist;
+  // G4double PVC_depth;
+  // G4double PMT_diam;
+  // G4double Wires_diam;
+  // G4double PMT_radius;
+  // G4double PMT_length;
+  // G4double Wires_radius;
+  // G4double Wires_dist;
+  //
+  // G4double airGap    ; // air gap between light guides and pmts, and between light guides and fibers
+  // G4double airGap_abs; //air gap between absorbers
+  // // G4double lguide_dx1;
+  // // G4double lguide_dy1;
+  // // G4double lguide_dx2;
+  // // G4double lguide_dy2;
+  // // G4double lguide_dz ;
+  // G4double lguide_edge; // edge size of base for optical concentrators
+  // G4double pmts_pitch;
+  //
+  //
+  // // Lead plane
+  // G4int lead_plane;
+  // G4double lp_dist;
+  // G4double lp_depth;
+  // G4double lp_mat;
+  // G4double lp_x;
+  // G4double lp_y;
+  // G4int preconstr;
+  G4int surface_lg;
+  G4int glue_interface;
+  G4int cone_material;
 
 
 
 
- G4double startX;
-  G4double startY;
-  G4double startX1;
-  G4double startY1;
 
- G4double Second_startX;
-  G4double Second_startY;
-  G4double Second_startX1;
-  G4double Second_startY1;
-  // FIXME put this in, in future
-  //G4Double  tolerance ;            // minimum distance between fibre and module side
-
-  G4int    fibre_scheme ;
-  G4int    fibre_material ;
-  G4int fibre_material1;
-  G4int fibre_material2;        // Material of secondary fibres
-
-  G4int    Second_fibre_scheme ;
-  G4int    Second_fibre_material ;
-  G4int Second_fibre_material1;
- G4int Second_fibre_material2;        // Material of secondary fibres
-
-  //G4int fibre_material1;
+  // G4double Second_module_xy ;       // size of the calo tower containing fibres
+  // G4double Second_module_yx ;
+  // G4double Second_fibres_x ;     //size of rectangle containing fibres inside module
+  // G4double Second_fibres_y ;
+  // G4double Second_fibres_x1 ;     //size of rectangle containing fibres inside module
+  // G4double Second_fibres_y1 ;
+  // G4int    postshower;       // flag to place a postshower behind the module
+  // G4int second;             // off/on secondary fibres
+  // G4int Second_second;             // off/on secondary fibres in 2nd section
+  //
+  // G4double margin ;               // minimum distance between fibres and tower sides
+  // G4double margin2 ;
+  // G4int    nFibresAlongX ;        // number of fibres along the Y side of the calo tower
+  // G4int    nFibresAlongY ;        // number of fibres along the Y side of the calo tower
+  // G4int    nFibresAlongX1 ;        // number of secondary fibres along the  side of the calo tower inside
+  // G4int    nFibresAlongY1 ;        // number of secondary  fibres along the Y side of the calo tower inside
+  // G4double fibreDistanceAlongX;
+  // G4double fibreDistanceAlongY;
+  //
+  // G4double Second_margin ;               // minimum distance between fibres and tower sides
+  // G4int    Second_nFibresAlongX ;        // number of fibres along the Y side of the calo tower
+  // G4int    Second_nFibresAlongY ;        // number of fibres along the Y side of the calo tower
+  // G4int    Second_nFibresAlongX1 ;        // number of secondary fibres along the  side of the calo tower inside
+  // G4int    Second_nFibresAlongY1 ;        // number of secondary  fibres along the Y side of the calo tower inside
+  // G4double Second_fibreDistanceAlongX;
+  // G4double Second_fibreDistanceAlongY;
+  //
+  // // For absorber's cells
+  // G4double startAX;
+  // G4double startAY;
+  //
+  // G4int    nCellsAlongX;
+  // G4int    nCellsAlongY;
+  //
+  // G4double startX;
+  // G4double startY;
+  // G4double startX1;
+  // G4double startY1;
+  //
+  // G4double Second_startX;
+  // G4double Second_startY;
+  // G4double Second_startX1;
+  // G4double Second_startY1;
+  // // FIXME put this in, in future
+  // //G4Double  tolerance ;            // minimum distance between fibre and module side
+  //
+  // G4int    fibre_scheme ;
+  // G4int    fibre_material ;
+  // G4int fibre_material1;
+  // G4int fibre_material2;        // Material of secondary fibres
+  //
+  // G4int    Second_fibre_scheme ;
+  // G4int    Second_fibre_material ;
+  // G4int Second_fibre_material1;
+  // G4int Second_fibre_material2;        // Material of secondary fibres
+  //
+  // //G4int fibre_material1;
   G4double fibre_cladRIndex;
-  G4int    fibre_isSquare;
+  // G4int    fibre_isSquare;
   G4double fibre_radius ;
   G4double fibre_length ;
-  G4double fibre_distance ;    // distance between fibres
-
- G4double Second_fibre_radius ;
-  G4double Second_fibre_length ;
-  G4double Second_fibre_distance ;    // distance between fibres
-
+  // G4double fibre_distance ;    // distance between fibres
+  //
+  // G4double Second_fibre_radius ;
+  // G4double Second_fibre_length ;
+  // G4double Second_fibre_distance ;    // distance between fibres
+  //
   G4double fibre_absLength ;   // absorption length in the fiber
+  //
+  // G4int gap_material ;
+  // G4double gap_l ;
+  //
+  // G4int det_material ;
+  // G4double det_l ;
+  //
+  // G4double depth ;
 
-  G4int gap_material ;
-  G4double gap_l ;
-
-  G4int det_material ;
-  G4double det_l ;
-
-  G4double depth ;
+  G4int visibility;
+  G4int wireFrame;
+  G4double crystal_lateral_depolishing;
+  G4double crystal_exit_depolishing;
+  G4int cell_separation_type;
+  G4double cell_separator_position;
+  G4double esr_thickness;
 
   std::vector<G4double> attLengths;
 
@@ -238,17 +257,60 @@ G4double margin2 ;
   G4Material* PVCMaterial;
   G4Material* PMTMaterial;
   G4Material* WiresMaterial;
- G4Material* PlaneMaterial;
+  G4Material* PlaneMaterial;
 
   G4Material* GlueMaterial ;
   G4Material* ConeMaterial ;
 
+  G4Material* GapAbsToInterfaceMaterial;
+  G4Material* GapInterfaceToReadoutMaterial;
+
   G4Material* Cl3Material ;
   G4Material* Cl4SSMaterial;
- G4Material* Cl43SSMaterial;
+  G4Material* Cl43SSMaterial;
 
   G4Material* GaMaterial ;
   G4Material* DeMaterial ;
+
+  Absorber absorber;
+
+  G4int modules_nx;
+  G4int modules_ny;
+
+  G4double **module_pos_x;
+  G4double **module_pos_y;
+  G4double **module_pos_z;
+
+  G4double module_size_x;
+  G4double module_size_y;
+  G4double module_size_z;
+
+  G4double calorimeter_x;
+  G4double calorimeter_y;
+  G4double calorimeter_z;
+
+  G4double InterfaceSizeX;
+  G4double InterfaceSizeY;
+  G4double InterfaceSizeZ;
+  G4double ReadoutSizeX;
+  G4double ReadoutSizeY;
+  G4double ReadoutSizeZ;
+
+  G4String   AbsName;
+  G4double   AbsSizeX;
+  G4double   AbsSizeY;
+  G4double   AbsSizeZ;
+  G4double   AbsPositionX;
+  G4double   AbsPositionY;
+  G4double   AbsPositionZ;
+  G4int      AbsMaterial;
+
+  G4int gap_abs_interface;
+  G4int gap_interface_readout;
+
+
+
+
 
 } ;
 

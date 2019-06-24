@@ -34,6 +34,9 @@
 /gps/particle               opticalphoton
 /gps/pos/type               Point
 /gps/ang/type               iso
+/gps/pos/centre             0 0 50. mm
+/run/beamOn 1
+
 # /gps/energy                 3 eV
 
 ##############
@@ -59,66 +62,3 @@
 # 427
 # x = -8.573
 # y = -7.65
-
-/gps/pos/centre             0.7794 1.35 -100. mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -95.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -90.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -85.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -80.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -75.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -70.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -65.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -60.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -55.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -50.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -45.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -40.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -35.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -30.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -25.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -20.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -15.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -10.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -5.05 mm
-/run/beamOn 1
-
-/gps/pos/centre             0.7794 1.35 -0.1 mm
-/run/beamOn 1
