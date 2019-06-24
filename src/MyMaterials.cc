@@ -63,7 +63,65 @@ G4Material* MyMaterials::Air()
   return mat;
 }
 
+G4Material* MyMaterials::AirKiller()
+{
+  G4double a, z, density;
+  G4int nelements;
 
+  G4Element* N = new G4Element("Nitrogen", "N", z=7 , a=14.01*g/mole);
+  G4Element* O = new G4Element("Oxygen"  , "O", z=8 , a=16.00*g/mole);
+
+  G4Material* mat = new G4Material("Air", density=1.29*mg/cm3, nelements=2);
+  mat->AddElement(N, 70.*perCent);
+  mat->AddElement(O, 30.*perCent);
+
+  const G4int nEntries_RI = 42;
+  G4double PhotonEnergy_RI[nEntries_RI] =
+    { 0.1000*eV, 1.0000*eV, 1.0121*eV, 1.0332*eV,
+      1.0552*eV, 1.0781*eV, 1.1021*eV, 1.1271*eV,
+      1.1533*eV, 1.1808*eV, 1.2096*eV, 1.2398*eV,
+      1.2716*eV, 1.3051*eV, 1.3404*eV, 1.3776*eV,
+      1.4170*eV, 1.4586*eV, 1.5028*eV, 1.5498*eV,
+      1.5998*eV, 1.6531*eV, 1.7101*eV, 1.7712*eV,
+      1.8368*eV, 1.9074*eV, 1.9837*eV, 2.0664*eV,
+      2.1562*eV, 2.2543*eV, 2.3616*eV, 2.4797*eV,
+      2.6102*eV, 2.7552*eV, 2.9173*eV, 3.0996*eV,
+      3.3062*eV, 3.5424*eV, 3.8149*eV, 4.1328*eV,
+      4.5085*eV, 4.9594*eV };
+
+  G4double RefractiveIndex[nEntries_RI] =
+    { 1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003, 1.0003, 1.0003,
+      1.0003, 1.0003 };
+
+  G4double Absorption[nEntries_RI] =
+  { 1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm, 1e-6*mm, 1e-6*mm,
+    1e-6*mm, 1e-6*mm };
+
+  G4MaterialPropertiesTable* myMPT = new G4MaterialPropertiesTable();
+  myMPT->AddProperty("RINDEX",PhotonEnergy_RI,RefractiveIndex,nEntries_RI);
+  myMPT->AddProperty("ABSLENGTH", PhotonEnergy_RI, Absorption     , nEntries_RI);
+  mat->SetMaterialPropertiesTable(myMPT);
+
+  return mat;
+}
 
 G4Material* MyMaterials::Water()
 {

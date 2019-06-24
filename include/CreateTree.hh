@@ -149,7 +149,7 @@ float depositedEnergy_2nd_Sect_FibresCorners;
   int   eventNumber      ;
   int   front_back      ;
   int   pmt_number      ;
-  // int   phTotal       ;
+  int   module_number       ;
 
   int   phPerPMT[2][9];
 
@@ -167,6 +167,14 @@ float depositedEnergy_2nd_Sect_FibresCorners;
   float PostMomentumZ ;
   float globalTime    ;
   float PhotonEnergy  ;
+
+  TTree * photonsAbsPoint;
+  // int abs_eventNumber;
+  float abs_x         ;
+  float abs_y          ;
+  float abs_z           ;
+  float abs_globalTime   ;
+  float abs_PhotonEnergy  ;
 
   std::vector<float> * attLengths;
 

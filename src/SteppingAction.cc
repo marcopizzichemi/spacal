@@ -160,8 +160,8 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
     G4String processName ;
     // force scintillation as creator process if the optical photon
     // was created as a primary, check for the creator otherwise.
-    // this is done because if the optical is a primary, the serach for
-    // creator process is impossible, and the instruction in else would crash
+    // this is done because if the optical is a primary, the search for
+    // creator process is impossible, and the instruction in "else" would crash
     // the simulation
 
     bool opticalSource = true;
@@ -191,29 +191,51 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
         }
       }
       boundaryStatus = boundary->GetStatus();
-      
-      if((boundaryStatus == FresnelRefraction) && (thePostPVName.contains("PMTSPV")))
+
+      if((boundaryStatus == FresnelRefraction) && (thePostPVName.contains("PMT")))
       // if((boundaryStatus == FresnelRefraction ))
       {
         // get pmt
 
-
+        // get mother logical volume name
+        G4String readoutName = thePostPV->GetMotherLogical()->GetName();
 
         G4int front_back       = -1;
-        if(thePostPVName.contains("FRONT"))
+        if(readoutName.contains("Negative"))
         {
           front_back = 0;
         }
-        if(thePostPVName.contains("BACK"))
+        if(readoutName.contains("Positive"))
         {
           front_back = 1;
         }
-        std::string nameOfPMT = (std::string) thePostPVName;
-        std::string numb_of_PMT = nameOfPMT.substr(nameOfPMT.size()-1,1);
-        int pmt_number = atoi(numb_of_PMT.c_str());
-        // std::cout << nameOfPMT.back() << std::endl;
 
-        // CreateTree::Instance()->phPerPMT[front_back][pmt_number]++;
+        // find pmt and module number from name
+        // structure of name:
+        // PMT_XX_module_YY
+        // so
+        std::string nameOfPMT =  (std::string) thePostPVName;
+        // YY
+        std::string str_module_number = nameOfPMT.substr(nameOfPMT.find_last_of("_")+1,100);
+        int module_number = atoi(str_module_number.c_str());
+        // PMT_XX_module
+        std::string cutString = nameOfPMT.substr(0,nameOfPMT.find_last_of("_"));
+
+        std::string str_pmt_number = cutString.substr(cutString.find_first_of("_") + 1,cutString.find_last_of("_") - cutString.find_first_of("_") - 1);
+        int pmt_number = atoi(str_pmt_number.c_str());
+
+        // G4cout << front_back << " " << str_module_number << " " << str_pmt_number << G4endl;
+        // G4cout << front_back << " " << module_number << " " << pmt_number << G4endl;
+
+        // get mother of mother logical volume name
+        // G4String Name = thePostPV->GetMotherLogical()->GetName();
+
+        // std::string nameOfPMT = (std::string) thePostPVName;
+        // std::string numb_of_PMT = nameOfPMT.substr(4,100);
+        // int pmt_number = atoi(numb_of_PMT.c_str());
+        // std::cout << nameOfPMT << std::endl;
+
+        CreateTree::Instance()->module_number        = module_number;
         CreateTree::Instance()->front_back    = front_back;
         CreateTree::Instance()->pmt_number    = pmt_number;
         CreateTree::Instance()->vertX         = theTrack->GetVertexPosition().x();
@@ -230,30 +252,16 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
         CreateTree::Instance()->PostMomentumZ = PostOnDetectorMomentum.getZ();
         CreateTree::Instance()->globalTime    = theTrack->GetGlobalTime()/CLHEP::ns;
         CreateTree::Instance()->PhotonEnergy  = theTrack->GetDynamicParticle()->GetTotalEnergy()/CLHEP::eV;
-
         CreateTree::Instance()->photons->Fill();
-
-
-
-
-        // std::cout << globalTime << std::endl;
-
-        // std::cout << thePrePVName << " "  << thePostPVName << std::endl;
 
         theTrack->SetTrackStatus(fKillTrackAndSecondaries);
       }
-
-
-      // std::cout << vertX << " " << vertY << " " << vertZ << std::endl;
-
     }
     else
     {
       processName = theTrack->GetCreatorProcess()->GetProcessName();
     }
-    // G4String processName = theTrack->GetCreatorProcess()->GetProcessName();
-    // G4String processName = "Scintillation"; //MOD
-    // std::cout << "aaaaaaaaaaaaaaaaa" << std::endl;
+
 
 
 
@@ -344,6 +352,17 @@ void SteppingAction::UserSteppingAction (const G4Step * theStep)
           //CreateTree::Instance()->h_photFast_cer_gap_time[attLength]   -> Fill( trc[attLength].time[it2], trc[attLength].prob[it2] );
         }
       }
+    }
+
+    if((theTrack->GetTrackStatus() == fStopAndKill) || (theTrack->GetTrackStatus() == fKillTrackAndSecondaries))
+    {
+      // save death point in space
+      CreateTree::Instance()->abs_x             = OnDetectorPosition.getX();
+      CreateTree::Instance()->abs_y             = OnDetectorPosition.getY();
+      CreateTree::Instance()->abs_z             = OnDetectorPosition.getZ();
+      CreateTree::Instance()->abs_globalTime    = theTrack->GetGlobalTime()/CLHEP::ns;
+      CreateTree::Instance()->abs_PhotonEnergy  = theTrack->GetDynamicParticle()->GetTotalEnergy()/CLHEP::eV;
+      CreateTree::Instance()->photonsAbsPoint->Fill();
     }
   } // optical photon
 

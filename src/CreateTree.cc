@@ -173,7 +173,7 @@ CreateTree::CreateTree (TString name,
   photons->Branch("event"         , &this->eventNumber   , "event/I");
   photons->Branch("front_back"    , &this->front_back    , "front_back/I");
   photons->Branch("pmt_number"    , &this->pmt_number    , "pmt_number/I");
-  // photons->Branch("phTotal"       , &this->phTotal       , "phTotal/I");
+  photons->Branch("module_number"    , &this->module_number    , "module_number/I");
   photons->Branch("phPerPMT"      , &this->phPerPMT      , "phPerPMT/I");
   photons->Branch("vertX"         , &this->vertX         , "vertX/F");
   photons->Branch("vertY"         , &this->vertY         , "vertY/F");
@@ -190,6 +190,13 @@ CreateTree::CreateTree (TString name,
   photons->Branch("globalTime"    , &this->globalTime    , "globalTime/F");
   photons->Branch("PhotonEnergy"  , &this->PhotonEnergy  , "PhotonEnergy/F");
 
+  photonsAbsPoint = new TTree ("photonsAbsPoint", "photonsAbsPoint");
+  photonsAbsPoint->Branch("event"         , &this->eventNumber   , "event/I");
+  photonsAbsPoint->Branch("x"             , &this->abs_x             , "x/F");
+  photonsAbsPoint->Branch("y"             , &this->abs_y             , "y/F");
+  photonsAbsPoint->Branch("z"             , &this->abs_z             , "z/F");
+  photonsAbsPoint->Branch("globalTime"    , &this->abs_globalTime    , "globalTime/F");
+  photonsAbsPoint->Branch("PhotonEnergy"  , &this->abs_PhotonEnergy  , "PhotonEnergy/F");
 
   attenuationLengths = new TTree("attenuationLengths", "attenuationLenghts");
   attenuationLengths -> Branch("attLengths","vector<float>",&attLengths);
@@ -368,6 +375,7 @@ bool CreateTree::Write (TFile * outfile)
   fibresPosition_2nd_Section->Write () ;
   attenuationLengths->Write() ;
   photons->Write();
+  photonsAbsPoint->Write();
   enHisto->Write();
   tHisto->Write();
   //h_phot_cer_lambda->Write();
@@ -484,6 +492,7 @@ depositedEnergy_2nd_Sect_FibresCorners = 0.;
 
   front_back    = 0 ;
   pmt_number    = 0 ;
+  module_number    = 0 ;
   vertX         = 0 ;
   vertY         = 0 ;
   vertZ         = 0 ;
@@ -498,4 +507,13 @@ depositedEnergy_2nd_Sect_FibresCorners = 0.;
   PostMomentumZ = 0 ;
   globalTime    = 0 ;
   PhotonEnergy  = 0 ;
+
+  // abs_eventNumber  = 0;
+  abs_x            = 0;
+  abs_y            = 0;
+  abs_z            = 0;
+  abs_globalTime   = 0;
+  abs_PhotonEnergy = 0;
+
+
 }

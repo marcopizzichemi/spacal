@@ -80,188 +80,51 @@ using namespace CLHEP;
 
 DetectorConstruction::DetectorConstruction (const string& configFileName)
 {
+  //-----------------------------------------------------
+  //------------- Define colors --------------
+  //-----------------------------------------------------
+  white   = G4Colour(1.00, 1.00, 1.00) ;  // white
+  grey    = G4Colour(0.50, 0.50, 0.50) ;  // grey
+  black   = G4Colour(0.00, 0.00, 0.00) ;  // black
+  red     = G4Colour(1.00, 0.00, 0.00) ;  // red
+  green   = G4Colour(0.00, 1.00, 0.00) ;  // green
+  blue    = G4Colour(0.00, 0.00, 1.00) ;  // blue
+  cyan    = G4Colour(0.00, 1.00, 1.00) ;  // cyan
+  air     = G4Colour(0.00, 1.00, 1.00) ;  // cyan
+  magenta = G4Colour(1.00, 0.00, 1.00) ;  // magenta
+  yellow  = G4Colour(1.00, 1.00, 0.00) ;  // yellow
+  brass   = G4Colour(0.80, 0.60, 0.40) ;  // brass
+  brown   = G4Colour(0.70, 0.40, 0.10) ;  // brown
+  orange  = G4Colour(1.00, 0.33, 0.00) ;  // orange
+
+
+
   //---------------------------------------
   //------------- Parameters --------------
   //---------------------------------------
 
   ConfigFile config (configFileName) ;
-
   config.readInto (checkOverlaps, "checkOverlaps") ;
   config.readInto (world_material, "world_material") ;
-  // config.readInto (abs_material, "abs_material") ;
   config.readInto (W_fraction, "W_fraction") ;
-  // config.readInto (hole_radius, "hole_radius") ;
-  // config.readInto (module_xy, "module_xy") ;
-  // config.readInto (module_yx, "module_yx") ;
-  // config.readInto (fibres_x, "fibres_x");
-  // config.readInto (fibres_y, "fibres_y");
-  // config.readInto (fibres_x1, "fibres_x1");
-  // config.readInto (fibres_y1, "fibres_y1");
-  //config.readInto (absorber_x, "absorber_x");
-  //  config.readInto (absorber_y, "absorber_y");
-  // config.readInto (postshower, "postshower") ;
-  // config.readInto (second, "second") ;
-  //  config.readInto (secondAbs, "secondAbs") ;
-  // config.readInto (Second_abs_material, "Second_abs_material") ;
-  // config.readInto (Second_module_xy, "Second_module_xy");
-  // config.readInto (Second_module_yx, "Second_module_yx") ;
-  // config.readInto (Second_W_fraction, "Second_W_fraction") ;
-  // config.readInto (Second_fibres_x, "Second_fibres_x");
-  // config.readInto (Second_fibres_y, "Second_fibres_y");
-  // config.readInto (Second_fibres_x1, "Second_fibres_x1");
-  // config.readInto (Second_fibres_y1, "Second_fibres_y1");
-  //
-  // config.readInto (fibre_scheme, "fibre_scheme") ;
-  // config.readInto (Second_fibre_scheme, "Second_fibre_scheme") ;
-  // config.readInto (fibre_material, "fibre_material") ;
-  // config.readInto (fibre_material1, "fibre_material1") ;
-  // config.readInto (fibre_material2, "fibre_material2") ;
-  // config.readInto (Second_fibre_material, "Second_fibre_material") ;
-  // config.readInto (Second_fibre_material1, "Second_fibre_material1") ;
-  // config.readInto (Second_fibre_material2, "Second_fibre_material2") ;
-  //
-  // config.readInto (fibre_cladRIndex, "fibre_cladRIndex") ;
-  // config.readInto (fibre_isSquare, "fibre_isSquare") ;
-  // config.readInto (fibre_radius, "fibre_radius") ;
-  // config.readInto (fibre_length, "fibre_length") ;
-  // config.readInto (Second_fibre_radius, "Second_fibre_radius") ;
-  // config.readInto (Second_fibre_length, "Second_fibre_length") ;
-  // config.readInto (fibre_distance, "fibre_distance") ;
-  // config.readInto (Second_fibre_distance, "Second_fibre_distance") ;
-  // config.readInto (fibre_absLength, "fibre_absLength") ;
-  //
-  // config.readInto (gap_l, "gap_l") ;
-  // config.readInto (gap_material, "gap_material") ;
-  //
-  // config.readInto (det_l, "det_l") ;
-  // config.readInto (det_material, "det_material") ;
-  //
-  // config.readInto (depth, "depth") ;
-  //
-  // config.readInto (lead_plane, "lead_plane") ;
-  // config.readInto (lp_dist, "lp_dist") ;
-  // config.readInto (lp_depth, "lp_depth") ;
-  // config.readInto (lp_mat, "lp_mat") ;
-  // config.readInto (lp_x, "lp_x") ;
-  // config.readInto (lp_y, "lp_y") ;
-  // config.readInto (preconstr, "preconstr") ;
-
-
   config.readInto (surface_lg,"surface_lg");
   config.readInto (glue_interface,"glue_interface");
   config.readInto (cone_material,"cone_material");
-
   B_field_intensity = config.read<double>("B_field_intensity") * tesla ;
-
-
-  // margin = std::max( 0.25*fibre_distance, 2.*fibre_radius );
-  // G4double staggering = 0.5*fibre_distance*((fibre_scheme+1)%2);
-  // G4double staggeredStart = 0.5 + 0.5*(fibre_scheme%2);
-  //
-  // std::cout << "staggeredStart: " << staggeredStart << std::endl;
-  // if( fibre_scheme == 1 || fibre_scheme == 2 ) // dice-4
-  // {
-  //   fibreDistanceAlongX = fibre_distance;
-  //   fibreDistanceAlongY = fibre_distance;
-  //   nFibresAlongX = floor( (fibres_x - 2.*margin) / fibreDistanceAlongX ) + 1 ;
-  //   nFibresAlongY = floor( (fibres_y - 2.*margin - staggering) / fibreDistanceAlongY ) + 1 ;
-  //   nFibresAlongX1 = floor( (fibres_x1 - 2.*margin) / fibreDistanceAlongX ) + 1 ;
-  //   nFibresAlongY1 = floor( (fibres_y1 - 2.*margin - staggering) / fibreDistanceAlongY ) + 1 ;
-  //   startX = 0.5 * ( module_xy - fibreDistanceAlongX * (nFibresAlongX - 1.0) ) ;
-  //   startY = 0.5 * ( module_yx - fibreDistanceAlongY * (nFibresAlongY - staggeredStart)) ;
-  //   startX1 = 0.5 * ( module_xy - fibreDistanceAlongX * (nFibresAlongX1 - 1.0) ) ;
-  //   startY1 = 0.5 * ( module_yx - fibreDistanceAlongY * (nFibresAlongY1 - staggeredStart)) ;
-  // }
-  // else if( fibre_scheme == 3 || fibre_scheme == 4 ) // dice-5
-  // {
-  //   fibreDistanceAlongX = 0.8660 * fibre_distance;
-  //   fibreDistanceAlongY = fibre_distance;
-  //   nFibresAlongX = floor( (fibres_x - 2.*margin)/ fibreDistanceAlongX ) + 1 ;
-  //   nFibresAlongY = floor( (fibres_y - 2.*margin - staggering) / fibreDistanceAlongY ) + 1 ;
-  //   nFibresAlongX1 = floor( (fibres_x1 - 2.*margin) / fibreDistanceAlongX ) + 1 ;
-  //   nFibresAlongY1 = floor( (fibres_y1 - 2.*margin - staggering) / fibreDistanceAlongY ) + 1 ;
-  //   startX = 0.5 * ( module_xy - fibreDistanceAlongX * (nFibresAlongX - 1.0) ) ;
-  //   startY = 0.5 * ( module_yx - fibreDistanceAlongY * (nFibresAlongY - staggeredStart)) ;
-  //   startX1 = 0.5 * ( module_xy - fibreDistanceAlongX * (nFibresAlongX1 - 1.0) ) ;
-  //   startY1 = 0.5 * ( module_yx - fibreDistanceAlongY * (nFibresAlongY1 - staggeredStart)) ;
-  // }
-  // else if( fibre_scheme == 5 || fibre_scheme == 6 ) // chessboard
-  // {
-  //   fibreDistanceAlongX = 0.5 * fibre_distance;
-  //   fibreDistanceAlongY = fibre_distance;
-  //   nFibresAlongX = floor( (fibres_x - 2.*margin)              / fibreDistanceAlongX ) + 1 ;
-  //   nFibresAlongY = floor( (fibres_y - 2.*margin - staggering) / fibreDistanceAlongY ) + 1 ;
-  //   nFibresAlongX1 = floor( (fibres_x1 - 2.*margin)              / fibreDistanceAlongX ) + 1 ;
-  //   nFibresAlongY1 = floor( (fibres_y1 - 2.*margin - staggering) / fibreDistanceAlongY ) + 1 ;
-  //   startX = 0.5 * ( module_xy - fibreDistanceAlongX * (nFibresAlongX - 1.0) ) ;
-  //   startY = 0.5 * ( module_yx - fibreDistanceAlongY * (nFibresAlongY - staggeredStart)) ;
-  //   startX1 = 0.5 * ( module_xy - fibreDistanceAlongX * (nFibresAlongX1 - 1.0) ) ;
-  //   startY1 = 0.5 * ( module_yx - fibreDistanceAlongY * (nFibresAlongY1 - staggeredStart)) ;
-  // }
-  //
-  // //________________________________________________________________________________
-  //
-  //
-  // margin2 = std::max( 0.25*Second_fibre_distance, 2.*Second_fibre_radius );
-  // G4double staggering2 = 0.5*Second_fibre_distance*((Second_fibre_scheme+1)%2);
-  // G4double staggeredStart2 = 0.5 + 0.5*(Second_fibre_scheme%2);
-  //
-  // std::cout << "staggeredStart: " << staggeredStart2 << std::endl;
-  // if( Second_fibre_scheme == 1 || Second_fibre_scheme == 2 ) // dice-4
-  // {
-  //   Second_fibreDistanceAlongX = Second_fibre_distance;
-  //   Second_fibreDistanceAlongY = Second_fibre_distance;
-  //   Second_nFibresAlongX = floor( (Second_fibres_x - 2.*margin2) / Second_fibreDistanceAlongX ) + 1 ;
-  //   Second_nFibresAlongY = floor( (Second_fibres_y - 2.*margin2 - staggering2) / Second_fibreDistanceAlongY ) + 1 ;
-  //   Second_nFibresAlongX1 = floor( (Second_fibres_x1 - 2.*margin2) / Second_fibreDistanceAlongX ) + 1 ;
-  //   Second_nFibresAlongY1 = floor( (Second_fibres_y1 - 2.*margin2 - staggering2) / Second_fibreDistanceAlongY ) + 1 ;
-  //   Second_startX = 0.5 * ( Second_module_xy - Second_fibreDistanceAlongX * (Second_nFibresAlongX - 1.0) ) ;
-  //   Second_startY = 0.5 * ( Second_module_yx - Second_fibreDistanceAlongY * (Second_nFibresAlongY - staggeredStart2)) ;
-  //   Second_startX1 = 0.5 * ( Second_module_xy - Second_fibreDistanceAlongX * (Second_nFibresAlongX1 - 1.0) ) ;
-  //   Second_startY1 = 0.5 * ( Second_module_yx - Second_fibreDistanceAlongY * (Second_nFibresAlongY1 - staggeredStart)) ;
-  // }
-  // else if( Second_fibre_scheme == 3 || Second_fibre_scheme == 4 ) // dice-5
-  // {
-  //   Second_fibreDistanceAlongX = 0.8660 * Second_fibre_distance;
-  //   Second_fibreDistanceAlongY = Second_fibre_distance;
-  //   Second_nFibresAlongX = floor( (Second_fibres_x - 2.*margin2)/ Second_fibreDistanceAlongX ) + 1 ;
-  //   Second_nFibresAlongY = floor( (Second_fibres_y - 2.*margin2 - staggering2) / Second_fibreDistanceAlongY ) + 1 ;
-  //   Second_nFibresAlongX1 = floor( (Second_fibres_x1 - 2.*margin2) / Second_fibreDistanceAlongX ) + 1 ;
-  //   Second_nFibresAlongY1 = floor( (Second_fibres_y1 - 2.*margin2 - staggering2) / Second_fibreDistanceAlongY ) + 1 ;
-  //   Second_startX = 0.5 * ( Second_module_xy - Second_fibreDistanceAlongX * (Second_nFibresAlongX - 1.0) ) ;
-  //   Second_startY = 0.5 * ( Second_module_yx - Second_fibreDistanceAlongY * (Second_nFibresAlongY - staggeredStart2)) ;
-  //   Second_startX1 = 0.5 * ( Second_module_xy - Second_fibreDistanceAlongX * (Second_nFibresAlongX1 - 1.0) ) ;
-  //   Second_startY1 = 0.5 * ( Second_module_yx - Second_fibreDistanceAlongY * (Second_nFibresAlongY1 - staggeredStart)) ;
-  //
-  // }
-  // else if( Second_fibre_scheme == 5 || Second_fibre_scheme == 6 ) // chessboard
-  // {
-  //   Second_fibreDistanceAlongX = 0.5 * Second_fibre_distance;
-  //   Second_fibreDistanceAlongY = Second_fibre_distance;
-  //   Second_nFibresAlongX = floor( (Second_fibres_x - 2.*margin2)              / Second_fibreDistanceAlongX ) + 1 ;
-  //   Second_nFibresAlongY = floor( (Second_fibres_y - 2.*margin2 - staggering2) / Second_fibreDistanceAlongY ) + 1 ;
-  //   Second_nFibresAlongX1 = floor( (Second_fibres_x1 - 2.*margin2)              / Second_fibreDistanceAlongX ) + 1 ;
-  //   Second_nFibresAlongY1 = floor( (Second_fibres_y1 - 2.*margin2 - staggering2) / Second_fibreDistanceAlongY ) + 1 ;
-  //   Second_startX = 0.5 * ( Second_module_xy - Second_fibreDistanceAlongX * (Second_nFibresAlongX - 1.0) ) ;
-  //   Second_startY = 0.5 * ( Second_module_yx - Second_fibreDistanceAlongY * (Second_nFibresAlongY - staggeredStart2)) ;
-  //   Second_startX1 = 0.5 * ( Second_module_xy - Second_fibreDistanceAlongX * (Second_nFibresAlongX1 - 1.0) ) ;
-  //   Second_startY1 = 0.5 * ( Second_module_yx - Second_fibreDistanceAlongY * (Second_nFibresAlongY1 - staggeredStart)) ;
-  // }
 
   //---------------------------------------//
   // CALORIMETER                           //
   //---------------------------------------//
-
   config.readInto(modules_nx,"modules_nx");
   config.readInto(modules_ny,"modules_ny");
-
+  //visibility
+  config.readInto(visibility,"crystalsVisibility");
+  config.readInto(wireFrame,"wireFrame");
 
   //---------------------------------------//
   // ABSORBER                              //
   //---------------------------------------//
-  // read from config file
-
-
+  // read from config fil
   config.readInto(AbsName ,    "absorber_name");
   config.readInto(AbsSizeX,    "absorber_size_x");
   config.readInto(AbsSizeY,    "absorber_size_y");
@@ -281,10 +144,7 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
 
   // rescale AbsSizeZ, adding esr_thickness if it's there
   AbsSizeZ = AbsSizeZ + esr_thickness;
-
-  // Absorber absorber;
   absorber.SetName(AbsName);
-  // absorber.SetID(i+1);
   absorber.SetDimensions( AbsSizeX,
                           AbsSizeY,
                           AbsSizeZ);
@@ -298,7 +158,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   //---------------------------------------//
   // CELLS                                 //
   //---------------------------------------//
-
   // read from config file
   std::vector<G4String>   CellNames;
   std::vector<G4double>   CellPositionX;
@@ -320,7 +179,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   std::vector<G4double>   CellCrystalSizeZ;
   std::vector<G4double>   CellCrystalPitchX;
   std::vector<G4double>   CellCrystalPitchY;
-
   config.readIntoVect(CellNames,        "cell_name");
   config.readIntoVect(CellPositionX,    "cell_pos_x");
   config.readIntoVect(CellPositionY,    "cell_pos_y");
@@ -333,7 +191,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   config.readIntoVect(CellCrystalSizeZ ,"cell_crystal_size_z");
   config.readIntoVect(CellCrystalPitchX,"cell_crystal_pitch_x");
   config.readIntoVect(CellCrystalPitchY,"cell_crystal_pitch_y");
-
   // optional keys
   // air layer. if nothing is given, no air layer (so build 3 meaningless arrays)
   bool airLayerGiven = config.read<bool>("cell_air_layer",0);
@@ -364,7 +221,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
       CellIntGapMaterial.push_back(1);
     }
   }
-
   // staggering. if nothing is given, no staggering
   bool stagGiven = config.read<bool>("cell_staggering",0);
   if(stagGiven)
@@ -386,7 +242,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
       CellStaggeringRemove.push_back(0);
     }
   }
-
   // check that all vectors have the same length
   bool cell_allEquals = true;
   if(CellNames.size() != CellPositionX.size())        cell_allEquals = false;
@@ -416,12 +271,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   // surface conditions
   crystal_lateral_depolishing = config.read<double>("crystal_lateral_depolishing",0);
   crystal_exit_depolishing    = config.read<double>("crystal_exit_depolishing",0);
-
-  //visibility
-  config.readInto(visibility,"crystalsVisibility");
-  config.readInto(wireFrame,"wireFrame");
-
-
   // create cells
   // for(unsigned int iAbs = 0 ; iAbs < AbsNames.size(); iAbs++)
   // {
@@ -430,9 +279,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
       Cell cell;
       cell.SetID(iCell);
       cell.SetName(CellNames[iCell]);
-      // cell.SetDimensions (CellSizeX[iCell],
-      //                     CellSizeY[iCell],
-      //                     CellSizeZ[iCell]);
       G4double modPositionZ;
       if(CellPositionZ[iCell] > 0)
       {
@@ -465,34 +311,29 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
       cell.SetStaggeringSize    (CellStaggeringSize[iCell]);
       cell.SetStaggeringParity  (CellStaggeringParity[iCell]);
       cell.SetStaggeringRemove  (CellStaggeringRemove[iCell]);
-      // cell.
       cell.MakeCellStruture();
       absorber.AddCell(cell);
     }
 
     G4cout << "Absorber " << absorber.GetName()
           <<  " cells = " << absorber.GetNumberOfCells() << G4endl;
-  // }
 
-  /////////_____________________________________________________________________________
-
-
+  gap_abs_interface_material = config.read<int>("gap_abs_interface_material",0);
+  gap_interface_readout_material = config.read<int>("gap_interface_readout_material",0);
 
 
-
-  //
-
-  gap_abs_interface = config.read<int>("gap_abs_interface",0);
-  gap_interface_readout = config.read<int>("gap_interface_readout",0);
+  gapSize = config.read<double>("gap_size",0.01); // default air gap is 10 micron
 
   InterfaceSizeX = AbsSizeX;
   InterfaceSizeY = AbsSizeY;
-  InterfaceSizeZ = 5*cm; //TEMP
+  InterfaceSizeZ = config.read<double>("interfaceLength",30);
+  if(gapSize > 0) // rescale if there is a gap
+  {
+    InterfaceSizeZ = InterfaceSizeZ+2.0*gapSize;
+  }
   ReadoutSizeX = AbsSizeX;
   ReadoutSizeY = AbsSizeY;
-  ReadoutSizeZ = 10*cm; //TEMP
-
-
+  ReadoutSizeZ = config.read<double>("readout_length",50);
 
   module_size_x = (AbsSizeX);
   module_size_y = (AbsSizeY);
@@ -518,7 +359,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
     }
   }
 
-
   calorimeter_x = modules_nx*module_size_x;
   calorimeter_y = modules_ny*module_size_y;
   calorimeter_z = module_size_z;
@@ -526,11 +366,6 @@ DetectorConstruction::DetectorConstruction (const string& configFileName)
   expHall_x = 2.0*calorimeter_x;
   expHall_y = 2.0*calorimeter_y;
   expHall_z = 2.0*calorimeter_z;
-
-
-
-
-
 
   B_field_IsInitialized = false ;
 
@@ -551,22 +386,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
 {
   G4cout << ">>>>>> DetectorConstruction::Construct ()::begin <<<<<<" << G4endl ;
 
-  //-----------------------------------------------------
-  //------------- Define colors --------------
-  //-----------------------------------------------------
-  G4Colour  white   (1.00, 1.00, 1.00) ;  // white
-  G4Colour  grey    (0.50, 0.50, 0.50) ;  // grey
-  G4Colour  black   (0.00, 0.00, 0.00) ;  // black
-  G4Colour  red     (1.00, 0.00, 0.00) ;  // red
-  G4Colour  green   (0.00, 1.00, 0.00) ;  // green
-  G4Colour  blue    (0.00, 0.00, 1.00) ;  // blue
-  G4Colour  cyan    (0.00, 1.00, 1.00) ;  // cyan
-  G4Colour  air     (0.00, 1.00, 1.00) ;  // cyan
-  G4Colour  magenta (1.00, 0.00, 1.00) ;  // magenta
-  G4Colour  yellow  (1.00, 1.00, 0.00) ;  // yellow
-  G4Colour  brass   (0.80, 0.60, 0.40) ;  // brass
-  G4Colour  brown   (0.70, 0.40, 0.10) ;  // brown
-  G4Colour  orange  (1.00, 0.33, 0.00) ;  // orange
+
 
 
 
@@ -597,624 +417,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
   Calo_VisAtt->SetVisibility(false);
   Calo_VisAtt->SetForceWireframe(wireFrame);
   calorimeterLV->SetVisAttributes(Calo_VisAtt);
-
-
-
-
-
-
-
-
-
-  // }
-  // else
-  // {
-    // new G4PVPlacement (0, G4ThreeVector (0., 0., 0.), calorimeterLV, "calorimeterPV", worldLV, false, 0, checkOverlaps) ;
-    // new G4PVPlacement (0, G4ThreeVector (0., 0., 1.*(module_z + Second_module_z)), calorimeterLV, "postshower1PV", worldLV, false, 0, checkOverlaps) ;
-    // new G4PVPlacement (0, G4ThreeVector (0., 0., 2.*(module_z + Second_module_z)), calorimeterLV, "postshower2PV", worldLV, false, 0, checkOverlaps) ;
-  // }
-
-  // Plane in front of Calo
-  // if ( lead_plane == 1)
-  // {
-  //
-  //   G4VSolid * PLANE = new G4Box ("PLANE", 0.5*lp_x, 0.5*lp_y, 0.5*lp_depth);
-  //   G4LogicalVolume * PLANELV = new G4LogicalVolume (PLANE, PlaneMaterial, "PLANELV");
-  //   new G4PVPlacement (0, G4ThreeVector (0.,0.,-0.5*(lp_dist + lp_depth)),PLANELV,"PLANEPV", worldLV, false, 0 ,checkOverlaps);
-  // }
-
-  // // Light guide structure
-  // // Truncated of cone, cut on the sides
-  // // goes from 20x20 mm2 (on the fibers) to 5 mm radius on the PMT
-  // // first, do a simple truncated cone
-  // G4VSolid* coneS = new G4Cons("aCone",0,PMT_radius,0, 0.5*sqrt(2)*lguide_edge ,0.5*PLEX_depth,0.0 * deg,360.0* deg);
-  // // then prepare a hollow box, section of the hole 20x20 mm2
-  // G4Box* innerBoxS = new G4Box ("innerBoxS", 0.5*lguide_edge, 0.5*lguide_edge, 0.5*PLEX_depth) ;
-  // G4Box* outerBoxS = new G4Box ("outerBoxS", 0.5*sqrt(2)*lguide_edge, 0.5*sqrt(2)*lguide_edge, 0.5*PLEX_depth) ;
-  // G4VSolid* subtract = new G4SubtractionSolid("Hollow-Box", outerBoxS, innerBoxS,0,G4ThreeVector(0.,0.,0.));
-  // // subtract hollow box from truncated cone
-  // G4VSolid* coneSolid = new G4SubtractionSolid("coneSolid", coneS, subtract,0,  G4ThreeVector(0.,0.,0.));
-  // G4LogicalVolume * LguideLV = new G4LogicalVolume (coneSolid,ConeMaterial,"LguideLV");
-  //
-  // //air light guide
-  // G4VSolid * air_LG_front_S = new G4Box ("air_LG_front_S ",0.5*module_xy, 0.5*module_yx,0.5*PLEX_depth);
-  // G4VSolid * air_LG_back_S = new G4Box ("air_LG_back_S ",0.5*module_xy, 0.5*module_yx,0.5*PLEX_depth);
-  // G4LogicalVolume *air_LG_front_LV = new G4LogicalVolume (air_LG_front_S,WoMaterial, "air_LG_front_LV");
-  // G4LogicalVolume *air_LG_back_LV = new G4LogicalVolume (air_LG_back_S,WoMaterial, "air_LG_back_LV");
-
-
-
-
-  // G4LogicalVolume * coneLV = new G4LogicalVolume (coneSolid,PLEXMaterial,"coneLV");
-  // G4PVPlacement *conePV = new G4PVPlacement (0,G4ThreeVector(0,0,-30.0 *cm), coneLV, "conePV", worldLV, false, 0, checkOverlaps) ;
-
-
-  // G4VSolid * PVCS = new G4Box ("PVCS", 0.5*module_xy, 0.5*module_yx, 0.5*PVC_depth);
-  // G4LogicalVolume * PVCLV = new G4LogicalVolume (PVCS,PVCMaterial, "PVCLV");
-  // G4VSolid * TubeS = new G4Tubs ("TubeS", 0., PMT_radius, 0.5*PMT_length, 0.*deg, 360.*deg);
-  //
-  // G4VSolid * WiresS = new G4Tubs ("WiresS", 0., Wires_radius, Wires_dist, 0.*deg, 360.*deg);
-  //
-  // G4LogicalVolume * PMTLV = new G4LogicalVolume (TubeS,PLEXMaterial, "PMTLV");
-  // G4LogicalVolume * WiresLV = new G4LogicalVolume (WiresS, WiresMaterial, "WiresLV");
-  //
-  // G4VSolid * PVC_pmt_frontS = new G4Box ("PVC_pmt_frontS",0.5*module_xy, 0.5*module_yx,0.5*PMT_length);
-  // G4VSolid * PVC_pmt_backS  = new G4Box ("PVC_pmt_backS" ,0.5*module_xy, 0.5*module_yx,0.5*PMT_length);
-  // G4LogicalVolume * PVC_pmt_frontLV = new G4LogicalVolume (PVC_pmt_frontS,PVCMaterial, "PVC_pmt_frontLV");
-  // G4LogicalVolume * PVC_pmt_backLV  = new G4LogicalVolume (PVC_pmt_backS,PVCMaterial, "PVC_pmt_frontLV");
-  //
-  //
-  //
-  // G4PVPlacement *PVC_pmt_frontPV = new G4PVPlacement (0, G4ThreeVector (0, 0,-0.5*(PLEX_dist+PMT_length+PLEX_depth*2+airGap*4 + airGap_abs) ),PVC_pmt_frontLV, "PVC_pmt_frontPV", worldLV, false, 0, checkOverlaps);
-  // G4PVPlacement *PVC_pmt_backPV = new G4PVPlacement (0, G4ThreeVector (0, 0,+0.5*(PLEX_dist+PMT_length+PLEX_depth*2+airGap*4 + airGap_abs) ),PVC_pmt_backLV, "PVC_pmt_backPV", worldLV, false, 0, checkOverlaps);
-  //
-  // G4PVPlacement *air_LG_front_PV = new G4PVPlacement(0, G4ThreeVector(0 ,0 , -0.5*(PLEX_dist + PLEX_depth + airGap*2 + airGap_abs)), air_LG_front_LV, "air_LG_front_PV", worldLV, false, 0, checkOverlaps);
-  // G4PVPlacement  *air_LG_back_PV = new G4PVPlacement(0, G4ThreeVector(0 ,0 , +0.5*(PLEX_dist + PLEX_depth + airGap*2 + airGap_abs)), air_LG_back_LV , "air_LG_back_PV" , worldLV, false, 0, checkOverlaps);
-  //
-  // G4VSolid *glue_S = new G4Box ("glue_S", 0.5*module_xy, 0.5*module_yx, 0.5*airGap);
-  // G4LogicalVolume * glue_LV = new G4LogicalVolume (glue_S,GlueMaterial, "glue_LV");
-  //
-  // G4PVPlacement  *gluePV_front = new G4PVPlacement(0, G4ThreeVector(0 ,0 , -0.5*(PLEX_dist + airGap + airGap_abs )), glue_LV, "gluePV_front", worldLV, false, 0, checkOverlaps);
-  // G4PVPlacement  *gluePV_back  = new G4PVPlacement(0, G4ThreeVector(0 ,0 , +0.5*(PLEX_dist + airGap + airGap_abs )), glue_LV, "gluePV_back" , worldLV, false, 0, checkOverlaps);
-  //
-  // G4PVPlacement  *glue_pmt_PV_front = new G4PVPlacement(0, G4ThreeVector(0 ,0 , -0.5*(PLEX_dist + 3*airGap + airGap_abs +PLEX_depth*2)), glue_LV, "glue_pmt_PV_front", worldLV, false, 0, checkOverlaps);
-  // G4PVPlacement  *glue_pmt_PV_back  = new G4PVPlacement(0, G4ThreeVector(0 ,0 , +0.5*(PLEX_dist + 3*airGap + airGap_abs +PLEX_depth*2)), glue_LV, "glue_pmt_PV_back" , worldLV, false, 0, checkOverlaps);
-
-
-
-
-
-  // if (preconstr == 1)
-  // {
-  //   // The Pre-Construction
-  //   // mods for real spacal test beam structure
-  //   //----------- ---------------
-  //
-  //   // new G4PVPlacement (0, G4ThreeVector (0.,0.,-0.5*(PVC_dist+PVC_depth)),PVCLV,"PVCPV", worldLV, false, 0, checkOverlaps);
-  //
-  //   // new G4PVPlacement (0, G4ThreeVector (0.,0.,-(PLEX_dist+PVC_depth+60)),PVCLV,"PVCPV", worldLV, false, 0, checkOverlaps);
-  //
-  //   startAX = 0. + 0.5*(absorber_x);
-  //   nCellsAlongX =  floor( module_xy / absorber_x );
-  //   nCellsAlongY  = floor ( module_yx / absorber_y);
-  //   startAY = 0.+ 0.5*(absorber_y + (module_yx-module_xy));
-  //
-  //   // The PMTS
-  //   // ------------------------------------- --------  ------
-  //
-  //
-  //   int NX = 1;
-  //
-  //
-  //   float pmt_x[3] = {-pmts_pitch,0,pmts_pitch};
-  //   float pmt_y[3] = {-pmts_pitch,0,pmts_pitch};
-  //   for(int iPMT = 0 ; iPMT < 3; iPMT++)
-  //   {
-  //     for(int jPMT = 0 ; jPMT < 3; jPMT++)
-  //     {
-  //       float PMTx = pmt_x[iPMT];
-  //       float PMTy = pmt_y[jPMT];
-  //
-  //       int iP = 3* iPMT + jPMT;
-  //       std::string Pname;
-  //
-  //       //-----------//
-  //       // FRONT     //
-  //       //-----------//
-  //
-  //       Pname = Form("PMTSPV FRONT %d", iP);
-  //       new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,0 ),PMTLV, Pname, PVC_pmt_frontLV, false, 0, checkOverlaps);
-  //
-  //       Pname = Form("LguidePV FRONT %d", iP);
-  //       G4PVPlacement *LG_front_PV = new G4PVPlacement (0, G4ThreeVector (PMTx,PMTy,0), LguideLV, Pname, air_LG_front_LV, false, 0, checkOverlaps);
-  //
-  //       //optical surface between cone and air cone
-  //       if(surface_lg)
-  //       {
-  //         std::stringstream Surfname_front;
-  //         Surfname_front << "Surface_" << Pname << "_air_front";
-  //         G4OpticalSurface* reflector_surf_front = new G4OpticalSurface(Surfname_front.str().c_str());
-  //         reflector_surf_front->SetType(dielectric_metal);
-  //         reflector_surf_front->SetFinish(polished);
-  //         reflector_surf_front->SetModel(unified);
-  //         reflector_surf_front->SetMaterialPropertiesTable(MyMaterials::ESR());
-  //         G4LogicalBorderSurface* reflectorLB_front;
-  //         Surfname_front << "LB";
-  //         reflectorLB_front = new G4LogicalBorderSurface(Surfname_front.str().c_str(),
-  //         LG_front_PV,
-  //         air_LG_front_PV,
-  //         reflector_surf_front);
-  //         //optical surface between air cone and cone
-  //         std::stringstream SurfnameInv_front;
-  //         SurfnameInv_front << "SurfaceInv_" << Pname << "_air_front";
-  //         G4OpticalSurface* reflectorInv_surf_front = new G4OpticalSurface(SurfnameInv_front.str().c_str());
-  //         reflectorInv_surf_front->SetType(dielectric_metal);
-  //         reflectorInv_surf_front->SetFinish(polished);
-  //         reflectorInv_surf_front->SetModel(unified);
-  //         reflectorInv_surf_front->SetMaterialPropertiesTable(MyMaterials::ESR());
-  //         G4LogicalBorderSurface* reflectorLBInv_front;
-  //         SurfnameInv_front << "LB";
-  //         reflectorLBInv_front = new G4LogicalBorderSurface(SurfnameInv_front.str().c_str(),
-  //         air_LG_front_PV,
-  //         LG_front_PV,
-  //         reflectorInv_surf_front);
-  //       }
-  //
-  //       //-----------//
-  //       // BACK      //
-  //       //-----------//
-  //
-  //       G4RotationMatrix* rotationMatrix = new G4RotationMatrix();
-  //       rotationMatrix->rotateY(180.*deg);
-  //
-  //       Pname = Form("PMTSPV BACK %d", iP);
-  //       new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,0 ),PMTLV, Pname, PVC_pmt_backLV, false, 0, checkOverlaps);
-  //
-  //       Pname = Form("LguidePV BACK %d", iP);
-  //       G4PVPlacement *LG_back_PV = new G4PVPlacement (rotationMatrix, G4ThreeVector (PMTx,PMTy, 0) , LguideLV, Pname, air_LG_back_LV, false, 0, checkOverlaps);
-  //
-  //
-  //       if(surface_lg)
-  //       {
-  //         //optical surface between cone and air cone
-  //         std::stringstream Surfname_back;
-  //         Surfname_back << "Surface_" << Pname << "_air_back";
-  //         G4OpticalSurface* reflector_surf_back = new G4OpticalSurface(Surfname_back.str().c_str());
-  //         reflector_surf_back->SetType(dielectric_metal);
-  //         reflector_surf_back->SetFinish(polished);
-  //         reflector_surf_back->SetModel(unified);
-  //         reflector_surf_back->SetMaterialPropertiesTable(MyMaterials::ESR());
-  //         G4LogicalBorderSurface* reflectorLB_back;
-  //         Surfname_back << "LB";
-  //         reflectorLB_back = new G4LogicalBorderSurface(Surfname_back.str().c_str(),
-  //         LG_back_PV,
-  //         air_LG_back_PV,
-  //         reflector_surf_back);
-  //         //optical surface between air cone and cone
-  //         std::stringstream SurfnameInv_back;
-  //         SurfnameInv_back << "SurfaceInv_" << Pname << "_air_back";
-  //         G4OpticalSurface* reflectorInv_surf_back = new G4OpticalSurface(SurfnameInv_back.str().c_str());
-  //         reflectorInv_surf_back->SetType(dielectric_metal);
-  //         reflectorInv_surf_back->SetFinish(polished);
-  //         reflectorInv_surf_back->SetModel(unified);
-  //         reflectorInv_surf_back->SetMaterialPropertiesTable(MyMaterials::ESR());
-  //         G4LogicalBorderSurface* reflectorLBInv_back;
-  //         SurfnameInv_back << "LB";
-  //         reflectorLBInv_back = new G4LogicalBorderSurface(SurfnameInv_back.str().c_str(),
-  //         air_LG_back_PV,
-  //         LG_back_PV,
-  //         reflectorInv_surf_back);
-  //
-  //       }
-  //     }
-  //   }
-  //
-  //   // OLD PMT PLACEMENT CODE
-  //   // for (float xP = -0.5 * module_xy + module_xy/6; NX < 4; xP += module_xy/3)
-  //   // {
-  //   //   int NY = 1;
-  //   //   for (float yP = -0.5 * module_yx + module_yx/6; NY < 4; yP += module_yx/3)
-  //   //   {
-  //   //     float PMTx = xP;
-  //   //     float PMTy = yP;
-  //   //
-  //   //     int iP = 3* NX + NY;
-  //   //
-  //   //     std::string Pname;
-  //   //     Pname = Form("PMTSPV %d", iP);
-  //   //
-  //   // std::string Wname;
-  //   // Wname = Form("WiresSPV %d", iP);
-  //   //
-  //   //     new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,-0.5*(PLEX_dist+PMT_length+PLEX_depth*2)),PMTLV, Pname, worldLV, false, 0, checkOverlaps);
-  //   // new G4PVPlacement (0, G4ThreeVector (PMTx, PMTy,-0.5*(PVC_dist + PVC_depth*2 )),WiresLV, Wname, worldLV, false, 0, checkOverlaps);
-  //   //
-  //   //     ++NY;
-  //   //   }
-  //   //   ++NX;
-  //   // }
-  // }
-
-  // The holes
-  // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-  // G4VSolid * holeS;
-  // if( !fibre_isSquare ) holeS = new G4Tubs ("holeS", fibre_radius, fibre_radius+hole_radius, 0.5*fibre_length, 0.*deg, 360.*deg) ;
-  // else
-  // {
-  //   G4VSolid * temp1 = new G4Box ("temp1", fibre_radius+hole_radius, fibre_radius+hole_radius, 0.5*fibre_length) ;
-  //   G4VSolid * temp2 = new G4Box ("temp2", fibre_radius, fibre_radius, 1.6*fibre_length) ;
-  //   holeS = new G4SubtractionSolid("holeS",temp1,temp2,0,G4ThreeVector(0.,0.,0.));
-  // }
-  // G4LogicalVolume * holeLV = new G4LogicalVolume (holeS, WoMaterial, "holeLV") ;
-  // //HoleParameterisation* holeParam = new HoleParameterisation(module_xy,fibre_radius,hole_radius,fibre_distance,fibre_length,WoMaterial);
-  // //new G4PVParameterised("holeP", holeLV, absorberLV, kUndefined, holeParam->GetNHoles(), holeParam);
-  //
-  //
-  // // the fibres
-  // // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-  // G4VSolid * fibre1S;
-  // if( !fibre_isSquare ) fibre1S = new G4Tubs ("fibre1S", 0., fibre_radius, 0.5*fibre_length, 0.*deg, 360.*deg) ;
-  // else                  fibre1S = new G4Box ("fibre1S", fibre_radius, fibre_radius, 0.5*fibre_length) ;
-  // G4LogicalVolume * fibre1SLV = new G4LogicalVolume (fibre1S, ClMaterial, "fibre1LV") ;
-  // //FibreParameterisation* fibreParam = new FibreParameterisation(module_xy,fibre_radius,fibre_distance,fibre_length,ClMaterial);
-  // //new G4PVParameterised("fibreP", fibreLV, absorberLV, kUndefined, fibreParam->GetNFibres(), fibreParam);
-  //
-  //
-  // //___________________________________________________________
-  //
-  //
-  // G4VSolid * fibre12S;
-  // if( !fibre_isSquare ) fibre12S = new G4Tubs ("fibre12S", 0., fibre_radius, 0.5*fibre_length, 0.*deg, 360.*deg) ;
-  // else                  fibre12S = new G4Box ("fibre12S", fibre_radius, fibre_radius, 0.5*fibre_length) ;
-  // G4LogicalVolume * fibre12SLV = new G4LogicalVolume (fibre12S, ClSSMaterial, "fibre12SLV") ;
-  //
-  // G4VSolid * fibre13S;
-  // if( !fibre_isSquare ) fibre13S = new G4Tubs ("fibre13S", 0., fibre_radius, 0.5*fibre_length, 0.*deg, 360.*deg) ;
-  // else                  fibre13S = new G4Box ("fibre13S", fibre_radius, fibre_radius, 0.5*fibre_length) ;
-  // G4LogicalVolume * fibre13SLV = new G4LogicalVolume (fibre13S, ClSSSMaterial , "fibre13SLV") ;
-  //
-  //
-  // G4VSolid * fibre2S;
-  // if( !fibre_isSquare ) fibre2S = new G4Tubs ("fibre2S", 0., fibre_radius, 0.5*Second_fibre_length, 0.*deg, 360.*deg) ;
-  // else                  fibre2S = new G4Box ("fibre2S", Second_fibre_radius, Second_fibre_radius, 0.5*Second_fibre_length) ;
-  // G4LogicalVolume * fibre2SLV = new G4LogicalVolume (fibre2S, Cl3Material, "fibre2LV") ;
-  // //FibreParameterisation* fibreParam = new FibreParameterisation(module_xy,fibre_radius,fibre_distance,fibre_length,ClMaterial);
-  // //new G4PVParameterised("fibreP", fibreLV, absorberLV, kUndefined, fibreParam->GetNFibres(), fibreParam);
-  //
-  //
-  // //___________________________________________________________
-  //
-  //
-  // G4VSolid * fibre22S;
-  // if( !fibre_isSquare ) fibre22S = new G4Tubs ("fibre22S", 0., Second_fibre_radius, 0.5*Second_fibre_length, 0.*deg, 360.*deg) ;
-  // else                  fibre22S = new G4Box ("fibre22S", Second_fibre_radius, Second_fibre_radius, 0.5*Second_fibre_length) ;
-  // G4LogicalVolume * fibre22SLV = new G4LogicalVolume (fibre22S, Cl4SSMaterial, "fibre2SSLV") ;
-  //
-  //
-  // G4VSolid * fibre23S;
-  // if( !fibre_isSquare ) fibre23S = new G4Tubs ("fibre23S", 0., Second_fibre_radius, 0.5*Second_fibre_length, 0.*deg, 360.*deg) ;
-  // else                  fibre23S = new G4Box ("fibre23S", Second_fibre_radius, Second_fibre_radius, 0.5*Second_fibre_length) ;
-  // G4LogicalVolume * fibre23SLV = new G4LogicalVolume (fibre23S, Cl43SSMaterial , "fibre23SLV") ;
-  //
-  // //_________________________________________________________________
-  //
-
-  // G4cout << "Sections: " << nCellsAlongX << "   " << nCellsAlongY << G4endl;
-
-
-
-  //thin layer of air between absorbers
-  // G4VSolid * airLayer = new G4Box ("airLayer", 0.5 * Second_module_xy, 0.5 * Second_module_yx, 0.5 * airGap_abs ) ;
-  // G4LogicalVolume * airLayerLV;
-  // airLayerLV = new G4LogicalVolume (airLayer, WoMaterial, "airLayerLV") ;
-  // G4PVPlacement* airLayerPV = new G4PVPlacement (0, G4ThreeVector (0., 0., 0.), airLayerLV, "airLayerPV", calorimeterLV, false, 0, checkOverlaps) ;
-
-
-
-
-
-
-
-
-  // //------------------------------------------------------------------//
-  // // OLD PLACEMENT STYLE (commented out on 13/06/2019)                //
-  // //------------------------------------------------------------------//
-  //
-  // // The Absorbers
-  // // First Absorber
-  // G4VSolid * absorber1S = new G4Box ("absorber1S", 0.5 * module_xy, 0.5 * (module_yx), 0.5 * module_z) ;
-  // G4LogicalVolume * absorber1LV;
-  // absorber1LV = new G4LogicalVolume (absorber1S, AbMaterial, "absorber1LV") ;
-  // G4PVPlacement *absorber1PV =  new G4PVPlacement (0, G4ThreeVector (0., 0., - 0.5* (module_z + airGap_abs)), absorber1LV, "absorber1PV", calorimeterLV, false, 0, checkOverlaps) ;
-  //
-  // // Second Absorber
-  // G4VSolid * absorber2S = new G4Box ("absorber2S", 0.5 * Second_module_xy, 0.5 * Second_module_yx, 0.5 * Second_module_z) ;
-  // G4LogicalVolume * absorber2LV;
-  // absorber2LV = new G4LogicalVolume (absorber2S, AbMaterial2, "absorber2LV") ;
-  // G4PVPlacement *absorber2PV = new G4PVPlacement (0, G4ThreeVector (0., 0., 0.5* (module_z + airGap_abs)), absorber2LV, "absorber2PV", calorimeterLV, false, 0, checkOverlaps) ;
-  //
-  // // fibres matrix filling
-  // // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-  // int index;
-  // int indexion;
-  // int index1;
-  // // loop on x direction
-  // int countX = 0 ; // for the staggering
-  //
-  // for (float x = -0.5*module_xy+startX; countX <nFibresAlongX; x += fibreDistanceAlongX)
-  // {
-  //   // loop on y direction
-  //   int countY = 0 ; // for the staggering
-  //   for (float y = - 0.5 * module_yx + startY; countY < nFibresAlongY; y += fibreDistanceAlongY)
-  //   {
-  //     float x_c = x;
-  //     float y_c = y;
-  //     //____________________________________________
-  //     //   float x_cs = -0.5 * module_xy;
-  //     //    float y_cs = -0.5 * module_xy;
-  //     //________________________________________________________________
-  //     // staggering
-  //     if( (fibre_scheme%2) == 0 )
-  //     y_c += 0.5*fibreDistanceAlongY*(countX%2) ;
-  //
-  //     int index = countX * nFibresAlongY + countY ;
-  //
-  //     CreateTree::Instance() -> fibresPosition -> Fill(index,x_c,y_c);
-  //
-  //
-  //     std::string name;
-  //
-  //
-  //     // **************  ***************
-  //     // #5
-  //     G4PVPlacement *fiberPV;
-  //     G4PVPlacement *holePV;
-  //     if (x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1)
-  //     {
-  //       name = Form("holePV %d",index);
-  //       holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber1LV, false, 0, checkOverlaps) ;
-  //
-  //       name = Form("fibre12SPV %d",index);
-  //       fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre12SLV, name, absorber1LV, false, 0, checkOverlaps) ;
-  //     }
-  //     // #2,#4,#6,#8
-  //     else if (x >= -1.5*fibres_x1 && x<= fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1 || x >= fibres_x1 && x<= 1.5*fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1 || x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= -1.5*fibres_y1 && y <= -0.5*fibres_y1 ||  x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= 0.5*fibres_y1 && y <= 1.5*fibres_y1 )
-  //     {
-  //       name = Form("holePV %d",index);
-  //       holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber1LV, false, 0, checkOverlaps) ;
-  //
-  //       name = Form("fibre1SPV %d",index);
-  //       fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre1SLV, name, absorber1LV, false, 0, checkOverlaps) ;
-  //     }
-  //
-  //     else
-  //     {
-  //       name = Form("holePV %d",index);
-  //       holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber1LV, false, 0, checkOverlaps) ;
-  //
-  //       name = Form("fibre13SPV %d",index);
-  //       fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre13SLV, name, absorber1LV, false, 0, checkOverlaps) ;
-  //     }
-  //
-  //     indexion = index;
-  //     index1 = index+1;
-  //     CreateTree::Instance() -> fibresPosition_1st_Section -> Fill(indexion,x_c,y_c);
-  //     ++countY ;
-  //
-  //
-  //
-  //     //optical surface between fiber and thin air layer
-  //     std::stringstream Surfname;
-  //     Surfname << "Surface_" << name << "_airLayer";
-  //     G4OpticalSurface* reflector_surf = new G4OpticalSurface(Surfname.str().c_str());
-  //     reflector_surf->SetType(dielectric_metal);
-  //     reflector_surf->SetFinish(polished);
-  //     reflector_surf->SetModel(unified);
-  //     reflector_surf->SetMaterialPropertiesTable(MyMaterials::ESR());
-  //     G4LogicalBorderSurface* reflectorLB;
-  //     Surfname << "LB";
-  //     reflectorLB = new G4LogicalBorderSurface(Surfname.str().c_str(),
-  //     fiberPV,
-  //     airLayerPV,
-  //     reflector_surf);
-  //     //optical surf from air gap to abs
-  //     std::stringstream absName;
-  //     absName << "Surface_hole_" << name << "_abs";
-  //     G4OpticalSurface* absSurface = new G4OpticalSurface(absName.str().c_str());
-  //     absSurface->SetType(dielectric_metal);
-  //     absSurface->SetFinish(ground);
-  //     absSurface->SetModel(unified);
-  //     absSurface->SetSigmaAlpha(0.1);
-  //     absSurface->SetMaterialPropertiesTable(MyMaterials::ABS_SURF());
-  //     G4LogicalBorderSurface* absLB;
-  //     absName << "LB";
-  //     absLB = new G4LogicalBorderSurface(absName.str().c_str(),                                                                                       holePV,
-  //     absorber1PV,
-  //     absSurface);
-  //
-  //
-  //
-  //
-  //
-  //   } // loop on y direction
-  //
-  //   ++countX ;
-  // } // loop on x direction
-  //
-  //
-  //
-  //
-  //
-  //
-  // //***********************8**    ******************   8******************
-  // // loop on x direction
-  // int countX3 = 0 ; // for the staggering
-  // int indexion4;
-  // int indexion3;
-  // for (float x = -0.5*Second_module_xy+Second_startX; countX3 < Second_nFibresAlongX; x += Second_fibreDistanceAlongX)
-  // {
-  //   // loop on y direction
-  //   int countY3 = 0 ; // for the staggering
-  //   for (float y = - 0.5 * Second_module_yx + Second_startY; countY3 < Second_nFibresAlongY; y += Second_fibreDistanceAlongY)
-  //   {
-  //     float x_c = x;
-  //     float y_c = y;
-  //     //____________________________________________
-  //     //   float x_cs = -0.5 * module_xy;
-  //     //    float y_cs = -0.5 * module_xy;
-  //     //________________________________________________________________
-  //     // staggering
-  //     if( (Second_fibre_scheme%2) == 0 )
-  //     y_c += 0.5*Second_fibreDistanceAlongY*(countX3%2) ;
-  //
-  //     int index = index1 + countX3 * Second_nFibresAlongY + countY3 ;
-  //     int index2 = countX3 * Second_nFibresAlongY + countY3;
-  //     CreateTree::Instance() -> fibresPosition -> Fill(index,x_c,y_c);
-  //     CreateTree::Instance() -> fibresPosition_2nd_Section -> Fill(index2,x_c,y_c);
-  //
-  //     std::string name;
-  //     G4PVPlacement *fiberPV;
-  //     G4PVPlacement *holePV;
-  //
-  //
-  //     // **************  ***************
-  //     if (x >= -0.5*Second_fibres_x1 && x<= 0.5*Second_fibres_x1 && y >= -0.5*Second_fibres_y1 && y <= 0.5*Second_fibres_y1)
-  //     {
-  //       name = Form("holePV %d",index);
-  //       holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber2LV, false, 0, checkOverlaps) ;
-  //
-  //       name = Form("fibre22SPV %d",index);
-  //       fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre22SLV, name, absorber2LV, false, 0, checkOverlaps) ;
-  //
-  //
-  //       // ************ *********************
-  //     }
-  //
-  //     // #11,#13,#15,#17
-  //     else if (x >= -1.5*fibres_x1 && x<= fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1 || x >= fibres_x1 && x<= 1.5*fibres_x1 && y >= -0.5*fibres_y1 && y <= 0.5*fibres_y1 || x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= -1.5*fibres_y1 && y <= -0.5*fibres_y1 ||  x >= -0.5*fibres_x1 && x<= 0.5*fibres_x1 && y >= 0.5*fibres_y1 && y <= 1.5*fibres_y1 )
-  //     {
-  //       name = Form("holePV %d",index);
-  //       holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber2LV, false, 0, checkOverlaps) ;
-  //
-  //       name = Form("fibre2SPV %d",index);
-  //       fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre2SLV, name, absorber2LV, false, 0, checkOverlaps) ;
-  //     }
-  //
-  //     else
-  //     {
-  //       name = Form("holePV %d",index);
-  //       holePV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), holeLV, name, absorber2LV, false, 0, checkOverlaps) ;
-  //
-  //       name = Form("fibre23SPV %d",index);
-  //       fiberPV = new G4PVPlacement (0,G4ThreeVector(x_c,y_c,0.), fibre23SLV, name, absorber2LV, false, 0, checkOverlaps) ;
-  //     }
-  //
-  //     indexion4 = index+1;
-  //     indexion3 = index2+1;
-  //     ++countY3 ;
-  //
-  //     //optical surface between fiber and thin air
-  //     std::stringstream Surfname;
-  //     Surfname << "Surface_" << name << "_airLayer";
-  //     G4OpticalSurface* reflector_surf = new G4OpticalSurface(Surfname.str().c_str());
-  //     reflector_surf->SetType(dielectric_metal);
-  //     reflector_surf->SetFinish(polished);
-  //     reflector_surf->SetModel(unified);
-  //     reflector_surf->SetMaterialPropertiesTable(MyMaterials::ESR());
-  //     G4LogicalBorderSurface* reflectorLB;
-  //     Surfname << "LB";
-  //     reflectorLB = new G4LogicalBorderSurface(Surfname.str().c_str(),
-  //     fiberPV,
-  //     airLayerPV,
-  //     reflector_surf);
-  //     //
-  //     std::stringstream absName;
-  //     absName << "Surface_hole_" << name << "_abs";
-  //     G4OpticalSurface* absSurface = new G4OpticalSurface(absName.str().c_str());
-  //     absSurface->SetType(dielectric_metal);
-  //     absSurface->SetFinish(ground);
-  //     absSurface->SetModel(unified);
-  //     absSurface->SetSigmaAlpha(0.1);
-  //     absSurface->SetMaterialPropertiesTable(MyMaterials::ABS_SURF());
-  //     G4LogicalBorderSurface* absLB;
-  //     absName << "LB";
-  //     absLB = new G4LogicalBorderSurface(absName.str().c_str(),                                                                             holePV,
-  //     absorber2PV,
-  //     absSurface);
-  //   } // loop on y direction
-  //   ++countX3 ;
-  // } // loop on x direction
-  // //------------------------------------------------------------------//
-  // // end of OLD PLACEMENT STYLE (commented out on 13/06/2019)         //
-  // //------------------------------------------------------------------//
-
-
-
-
-
-
-
-
-
-
-
-
-  //------------------------------------------------------------------//
-  // NEW PLACEMENT STYLE (started on 13/06/2019)                      //
-  //------------------------------------------------------------------//
-  //
-  // New placement style is intended to reflect more accurately the SPACAL-RD test beam module
-  // Old placement had (slightly) wrong fiber positioning.
-  //
-  // First, a bit of explanation on directions:
-  // 1) in this simulation, the spacal longitutidal axis is oriented like z
-  // 2) so the transverse plan is x-y.
-  // 3) The beam of particle has always been shot from negative z (at least according to
-  //    gps.mac files found in the code)
-  // 4) The simulation calls FRONT the absorber placed in the negative z part. Its name is absorber1 and
-  //    it is visualized in grey. So the particles are always entering the module from the FRONT
-  // 5) The rows of crystals, or better the rows of absorber that are stacked on top of one another
-  //    to form the module, are on the z-y plane, and are piled up along x.
-  //
-  // So, watching the module from the FRONT part, the z axis is pointing away from the viewer, and
-  // the other two axis are placed like
-  //
-  //
-  //     x
-  //     ^
-  //     |
-  //     |
-  //     |
-  //     |
-  //     ------------> y
-  //
-  //
-  // From this viewpoint, the module looked like a pile up of rows with alternate number of elements.
-  // First row from the bottom is made of 33 holes (we call it type A), second row 32 holes (type B),
-  // third type A and so on...
-  // This is the first inaccuracy of previous geometry, where all rows where made of 32 holes.
-  //
-  // The A-B-A-B scheme is maintained until the very last two row on the top of the module, where the last row
-  // is a A instead then a B.
-  // This would be a minor difference with reality and it is probably not worth implementing
-  //
-  // The holes are staggered between consecutive rows, both in real module and in the previous geometry
-  //
-  // The module is made of 2 sectors (FRONT and BACK), each made of 9 cells, in a 3x3 array. The real
-  // cell dimension is no the same for all cells. This is a consequence of the type A-B scheme. In fact,
-  // both rows are crossing 3 cells, so they are divided in 3 sectors, each sector defined by a given
-  // type of crystal. In particular:
-  //
-  // 1) Type A rows are made of (11 + 11 + 11) crystals
-  // 2) Type B rows are made of (10 + 11 + 11) crystals
-  //
-  // In previous geometry, the 10 crystals sector was on the right (in this viewpoint defined above)
-  // and not on the left.
-  //
-  // new placement is based on Cell class (see the Cell.hh and Cell.cc files)
-
-
-  // bool wireFrame = true;
 
 
   //-----------------------------------------//
@@ -1261,7 +463,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       //declear a stringstream for composition of names
       std::stringstream sname;
       std::stringstream smodule;
-      smodule << "module_" << iMod << "_" << jMod;
+      int module_number = iMod*modules_ny + jMod;
+      smodule << "module_" << module_number;
       std::string moduleName = smodule.str();
 
       sname << moduleName << "_S";
@@ -1289,25 +492,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       // The interface volumes
       //-----------------------------------//
       //-----------------------------------//
-      G4double gapSize = 0.01 *mm;
-      // first prepare the logical volumes of the light guides, then they will be placed in space with a loop
-      // Light guide structure
-      // Truncated of cone, cut on the sides
-      // goes from 20x20 mm2 (on the fibers) to 5 mm radius on the PMT
-      // first, do a simple truncated cone
-      G4double lguide_edge = 20 *mm;
-      G4double PLEX_depth = InterfaceSizeZ - 2.0*gapSize;
-      G4double PMT_radius = 5 *mm;
-      G4VSolid* coneS = new G4Cons("aCone",0,PMT_radius,0, 0.5*sqrt(2)*lguide_edge ,0.5*PLEX_depth,0.0 * deg,360.0* deg);
-      // then prepare a hollow box, section of the hole 20x20 mm2
-      G4Box* innerBoxS = new G4Box ("innerBoxS", 0.5*lguide_edge, 0.5*lguide_edge, 0.5*PLEX_depth) ;
-      G4Box* outerBoxS = new G4Box ("outerBoxS", 0.5*sqrt(2)*lguide_edge, 0.5*sqrt(2)*lguide_edge, 0.5*PLEX_depth) ;
-      G4VSolid* subtract = new G4SubtractionSolid("Hollow-Box", outerBoxS, innerBoxS,0,G4ThreeVector(0.,0.,0.));
-      // subtract hollow box from truncated cone
-      G4VSolid* coneSolid = new G4SubtractionSolid("coneSolid", coneS, subtract,0,  G4ThreeVector(0.,0.,0.));
-      G4LogicalVolume * LguideLV = new G4LogicalVolume (coneSolid,ConeMaterial,"LguideLV");
-
-
 
       //-----------------------------------//
       // positive z inteface
@@ -1324,7 +508,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       sname << "Interface_Positive_Z_"
             << moduleName
             << "_LV";
-      Interface_Positive_Z_LV = new G4LogicalVolume (Interface_Positive_Z_S, WoMaterial, sname.str().c_str()) ;
+      Interface_Positive_Z_LV = new G4LogicalVolume (Interface_Positive_Z_S, MyMaterials::AirKiller(), sname.str().c_str()) ;
       sname.str("");
 
       sname << "Interface_Positive_Z_"
@@ -1387,17 +571,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
                                                                      Gap_Interface_Readout_Positive_Z_LV, sname.str().c_str(),
                                                                      Interface_Positive_Z_LV, false, 0, checkOverlaps) ;
       sname.str("");
-
-      // now the light guides
-
-
-
       // end of positive z
       //-----------------------------------//
-
-
-
-
 
 
       //-----------------------------------//
@@ -1415,7 +590,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       sname << "Interface_Negative_Z_"
             << moduleName
             << "_LV";
-      Interface_Negative_Z_LV = new G4LogicalVolume (Interface_Negative_Z_S, WoMaterial, sname.str().c_str()) ;
+      Interface_Negative_Z_LV = new G4LogicalVolume (Interface_Negative_Z_S, MyMaterials::AirKiller(), sname.str().c_str()) ;
       sname.str("");
 
       sname << "Interface_Negative_Z_"
@@ -1427,7 +602,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
                                                                      Interface_Negative_Z_LV, sname.str().c_str(),
                                                                      moduleLV, false, 0, checkOverlaps) ;
       sname.str("");
-
       //
       G4VSolid        *Gap_Abs_Interface_Negative_Z_S;
       G4LogicalVolume *Gap_Abs_Interface_Negative_Z_LV;
@@ -1453,7 +627,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
                                                                      Gap_Abs_Interface_Negative_Z_LV, sname.str().c_str(),
                                                                      Interface_Negative_Z_LV, false, 0, checkOverlaps) ;
       sname.str("");
-
       G4VSolid        *Gap_Interface_Readout_Negative_Z_S;
       G4LogicalVolume *Gap_Interface_Readout_Negative_Z_LV;
       G4PVPlacement   *Gap_Interface_Readout_Negative_Z_PV;
@@ -1478,9 +651,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
                                                                      Gap_Interface_Readout_Negative_Z_LV, sname.str().c_str(),
                                                                      Interface_Negative_Z_LV, false, 0, checkOverlaps) ;
       sname.str("");
+      // end of negative z
       //-----------------------------------//
 
-
+      // vis att.
       G4VisAttributes* Interface_VisAtt = new G4VisAttributes(red);  // color
       Interface_VisAtt->SetVisibility(true);      // absorbers are always visible
       Interface_VisAtt->SetForceWireframe(true);
@@ -1499,8 +673,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       //--------------------------------------- //
 
 
+
       //--------------------------------------- //
-      // The readout
+      // The readout volumes
       // prepare pointers
       G4VSolid        *Readout_Positive_Z_S;
       G4LogicalVolume *Readout_Positive_Z_LV;
@@ -1513,7 +688,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       sname << "Readout_Positive_Z_"
             << moduleName
             << "_LV";
-      Readout_Positive_Z_LV = new G4LogicalVolume (Readout_Positive_Z_S, WoMaterial, sname.str().c_str()) ;
+      Readout_Positive_Z_LV = new G4LogicalVolume (Readout_Positive_Z_S, MyMaterials::AirKiller(), sname.str().c_str()) ;
       sname.str("");
 
       sname << "Readout_Positive_Z_"
@@ -1525,8 +700,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
                                                                      Readout_Positive_Z_LV, sname.str().c_str(),
                                                                      moduleLV, false, 0, checkOverlaps) ;
       sname.str("");
-
-
       G4VSolid        *Readout_Negative_Z_S;
       G4LogicalVolume *Readout_Negative_Z_LV;
       G4PVPlacement   *Readout_Negative_Z_PV;
@@ -1539,7 +712,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       sname << "Readout_Negative_Z_"
             << moduleName
             << "_LV";
-      Readout_Negative_Z_LV = new G4LogicalVolume (Readout_Negative_Z_S, WoMaterial, sname.str().c_str()) ;
+      Readout_Negative_Z_LV = new G4LogicalVolume (Readout_Negative_Z_S, MyMaterials::AirKiller(), sname.str().c_str()) ;
       sname.str("");
 
       sname << "Readout_Negative_Z_"
@@ -1560,6 +733,23 @@ G4VPhysicalVolume* DetectorConstruction::Construct ()
       //--------------------------------------- //
 
 
+
+      //--------------------------------------- //
+      // Specific optical readout part
+      // this is intentionally hardcoded (but the meaningful job is done in different routines)
+      // because there is no way to modularize every possible readout
+      // the user will have to take care of writing another function to create the volumes of
+      // light concentrators and photo-detectors, and modify the CreateTree and SteppingAction classes
+      // to have a personalized readout of the light transport
+      // light guides
+      ConstructLightGuides(Interface_Negative_Z_LV,moduleName,0);
+      // on the other side, we need to rotate the light guides...
+      G4RotationMatrix* rotationMatrix = new G4RotationMatrix();
+      rotationMatrix->rotateY(180.*deg);
+      ConstructLightGuides(Interface_Positive_Z_LV,moduleName,rotationMatrix);
+      // and pmts
+      ConstructPMTs(Readout_Positive_Z_LV,moduleName,0);
+      ConstructPMTs(Readout_Negative_Z_LV,moduleName,0);
 
 
 
@@ -2218,21 +1408,21 @@ void DetectorConstruction::initializeMaterials ()
   G4cout << "Cone material: "<< ConeMaterial << G4endl ;
 
   GapAbsToInterfaceMaterial  = NULL;
-  if      ( gap_abs_interface == 0 ) GapAbsToInterfaceMaterial = MyMaterials::Air () ;
-  else if ( gap_abs_interface == 1 ) GapAbsToInterfaceMaterial = MyMaterials::OpticalGrease () ;
+  if      ( gap_abs_interface_material == 0 ) GapAbsToInterfaceMaterial = MyMaterials::Air () ;
+  else if ( gap_abs_interface_material == 1 ) GapAbsToInterfaceMaterial = MyMaterials::OpticalGrease () ;
   else
   {
-    G4cerr << "<DetectorConstructioninitializeMaterials>: Invalid GapAbsToInterfaceMaterial material specifier " << gap_abs_interface << G4endl ;
+    G4cerr << "<DetectorConstructioninitializeMaterials>: Invalid GapAbsToInterfaceMaterial material specifier " << gap_abs_interface_material << G4endl ;
     exit (-1) ;
   }
   G4cout << "Cone material: "<< GapAbsToInterfaceMaterial << G4endl ;
 
   GapInterfaceToReadoutMaterial  = NULL;
-  if      ( gap_interface_readout == 0 ) GapInterfaceToReadoutMaterial = MyMaterials::Air () ;
-  else if ( gap_interface_readout == 1 ) GapInterfaceToReadoutMaterial = MyMaterials::OpticalGrease () ;
+  if      ( gap_interface_readout_material == 0 ) GapInterfaceToReadoutMaterial = MyMaterials::Air () ;
+  else if ( gap_interface_readout_material == 1 ) GapInterfaceToReadoutMaterial = MyMaterials::OpticalGrease () ;
   else
   {
-    G4cerr << "<DetectorConstructioninitializeMaterials>: Invalid GapInterfaceToReadoutMaterial material specifier " << gap_interface_readout << G4endl ;
+    G4cerr << "<DetectorConstructioninitializeMaterials>: Invalid GapInterfaceToReadoutMaterial material specifier " << gap_interface_readout_material << G4endl ;
     exit (-1) ;
   }
   G4cout << "GapInterfaceToReadoutMaterial material: "<< GapInterfaceToReadoutMaterial << G4endl ;
@@ -2268,15 +1458,15 @@ void DetectorConstruction::initializeMaterials ()
   // }
   // G4cout << "Ab. material2: "<< AbMaterial2 << G4endl ;
   //
-  // PLEXMaterial = NULL ;
-  // PLEXMaterial = MyMaterials::PLEX () ;
+  PLEXMaterial = NULL ;
+  PLEXMaterial = MyMaterials::PLEX () ;
   //
-  // G4cout << "PLEX. material: "<< PLEXMaterial << G4endl ;
+  G4cout << "PLEX. material: "<< PLEXMaterial << G4endl ;
   //
-  // PVCMaterial = NULL ;
-  // PVCMaterial = MyMaterials::PVC () ;
+  PVCMaterial = NULL ;
+  PVCMaterial = MyMaterials::PVC () ;
   //
-  // G4cout << "PVC. material: "<< PVCMaterial << G4endl ;
+  G4cout << "PVC. material: "<< PVCMaterial << G4endl ;
   //
   // PMTMaterial = NULL ;
   // PMTMaterial = MyMaterials::CuAir () ;
@@ -2487,7 +1677,80 @@ void DetectorConstruction::ConstructField ()
   return ;
 }
 
-void ConstructInterface(G4LogicalVolume *moduleLV,  std::string moduleName)
+void DetectorConstruction::ConstructLightGuides(G4LogicalVolume *Interface_LV, std::string moduleName,G4RotationMatrix *rot)
 {
-  
+  // now the light guides
+  // Light guide structure
+  // Truncated of cone, cut on the sides
+  // goes from 20x20 mm2 (on the fibers) to 5 mm radius on the PMT
+  // first, do a simple truncated cone
+  std::stringstream sname;
+  G4double lguide_edge = 20 *mm;
+  G4double PLEX_depth = InterfaceSizeZ - 2.0*gapSize;
+  G4double PMT_radius = 5 *mm;
+  G4VSolid* coneS = new G4Cons("aCone",0,PMT_radius,0, 0.5*sqrt(2)*lguide_edge ,0.5*PLEX_depth,0.0 * deg,360.0* deg);
+  // then prepare a hollow box, section of the hole 20x20 mm2
+  G4Box* innerBoxS = new G4Box ("innerBoxS", 0.5*lguide_edge, 0.5*lguide_edge, 0.5*PLEX_depth) ;
+  G4Box* outerBoxS = new G4Box ("outerBoxS", 0.5*sqrt(2)*lguide_edge, 0.5*sqrt(2)*lguide_edge, 0.5*PLEX_depth) ;
+  G4VSolid* subtract = new G4SubtractionSolid("Hollow-Box", outerBoxS, innerBoxS,0,G4ThreeVector(0.,0.,0.));
+  // subtract hollow box from truncated cone
+  G4VSolid* coneSolid = new G4SubtractionSolid("coneSolid", coneS, subtract,0,  G4ThreeVector(0.,0.,0.));
+  G4LogicalVolume * LguideLV = new G4LogicalVolume (coneSolid,ConeMaterial,"LguideLV");
+
+  int nLGx = 3;
+  int nLGy = 3;
+  G4double lg_pitch = 20 * mm;
+  G4double lg_x[3] = {-lg_pitch,0,lg_pitch};
+  G4double lg_y[3] = {-lg_pitch,0,lg_pitch};
+  for(int iLG = 0; iLG < nLGx; iLG++)
+  {
+    for(int jLG = 0; jLG < nLGy; jLG++)
+    {
+      sname << "LightGuide_"
+            << iLG << "_" << jLG << "_"
+            << moduleName
+            << "_PV";
+      new G4PVPlacement (rot, G4ThreeVector (lg_x[iLG],lg_y[jLG],0), LguideLV, sname.str().c_str(), Interface_LV, false, 0, checkOverlaps);
+      sname.str("");
+      G4VisAttributes* LG_VisAtt = new G4VisAttributes(green);  // color
+      LG_VisAtt->SetVisibility(true);
+      LG_VisAtt->SetForceWireframe(wireFrame);
+      LguideLV->SetVisAttributes(LG_VisAtt);
+    }
+  }
+}
+
+
+void DetectorConstruction::ConstructPMTs(G4LogicalVolume *Readout_LV, std::string moduleName,G4RotationMatrix *rot)
+{
+  std::stringstream sname;
+  G4double PMT_radius = 5*mm;
+  G4double PMT_length = ReadoutSizeZ;
+  G4VSolid * TubeS = new G4Tubs ("TubeS", 0., PMT_radius, 0.5*PMT_length, 0.*deg, 360.*deg);
+  G4LogicalVolume * PMTLV = new G4LogicalVolume (TubeS,PLEXMaterial, "PMTLV");
+
+  int nLGx = 3;
+  int nLGy = 3;
+  G4double lg_pitch = 20 * mm;
+  G4double lg_x[3] = {-lg_pitch,0,lg_pitch};
+  G4double lg_y[3] = {-lg_pitch,0,lg_pitch};
+
+  for(int iLG = 0; iLG < nLGx; iLG++)
+  {
+    for(int jLG = 0; jLG < nLGy; jLG++)
+    {
+      int pmt_number = iLG*nLGy + jLG;
+      sname << "PMT_"
+            << pmt_number
+            << "_"
+            << moduleName;
+      new G4PVPlacement (rot, G4ThreeVector (lg_x[iLG],lg_y[jLG],0), PMTLV, sname.str().c_str(), Readout_LV, false, 0, checkOverlaps);
+      sname.str("");
+      G4VisAttributes* LG_VisAtt = new G4VisAttributes(grey);  // color
+      LG_VisAtt->SetVisibility(true);
+      LG_VisAtt->SetForceWireframe(wireFrame);
+      PMTLV->SetVisAttributes(LG_VisAtt);
+    }
+  }
+
 }

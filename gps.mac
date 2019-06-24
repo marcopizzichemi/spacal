@@ -35,7 +35,7 @@
 /gps/pos/type               Point
 /gps/ang/type               iso
 /gps/pos/centre             0 0 50. mm
-/run/beamOn 1
+/run/beamOn 10000
 
 # /gps/energy                 3 eV
 

@@ -81,7 +81,9 @@ public:
 
   void initializeMaterials () ;
   void ConstructField () ;
-  void ConstructInterface(G4LogicalVolume *moduleLV,  std::string moduleName);
+  void ConstructLightGuides(G4LogicalVolume *Interface_LV,  std::string moduleName, G4RotationMatrix *rot);
+  void ConstructPMTs(G4LogicalVolume *Readout_LV, std::string moduleName,G4RotationMatrix *rot);
+
 
   Fiber* GetFiber() { return &fib ; } ;
 
@@ -289,6 +291,7 @@ private:
   G4double calorimeter_y;
   G4double calorimeter_z;
 
+  G4double gapSize ;
   G4double InterfaceSizeX;
   G4double InterfaceSizeY;
   G4double InterfaceSizeZ;
@@ -305,11 +308,23 @@ private:
   G4double   AbsPositionZ;
   G4int      AbsMaterial;
 
-  G4int gap_abs_interface;
-  G4int gap_interface_readout;
+  G4int gap_abs_interface_material;
+  G4int gap_interface_readout_material;
 
 
-
+  G4Colour  white   ;
+  G4Colour  grey    ;
+  G4Colour  black   ;
+  G4Colour  red     ;
+  G4Colour  green   ;
+  G4Colour  blue    ;
+  G4Colour  cyan    ;
+  G4Colour  air     ;
+  G4Colour  magenta ;
+  G4Colour  yellow  ;
+  G4Colour  brass   ;
+  G4Colour  brown   ;
+  G4Colour  orange  ;
 
 
 } ;

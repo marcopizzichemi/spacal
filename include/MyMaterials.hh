@@ -20,6 +20,7 @@ public:
 
   static G4Material* Vacuum();
   static G4Material* Air();
+  static G4Material* AirKiller(); // special material with same prop of air but absorbing light 
   static G4Material* Water();
   static G4Material* Silicon();
   static G4Material* Aluminium();
@@ -49,7 +50,7 @@ public:
   static G4MaterialPropertiesTable* ESR();      // ESR reflector surface
   static G4MaterialPropertiesTable* ABS_SURF(); // Absorber internal surface
   static G4MaterialPropertiesTable* crystal_depo_SURF(); // crystal lateral surface
-  
+
   static G4double fromNmToEv(G4double wavelength);
   static G4double fromEvToNm(G4double energy);
   static G4double CalculateSellmeier(int size, G4double indexZero, G4double *nVec, G4double *lVec, G4double wavelength);
